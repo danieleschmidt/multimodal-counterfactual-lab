@@ -1,0 +1,27 @@
+# Global ownership
+* @danieleschmidt
+
+# Core functionality
+src/counterfactual_lab/core.py @danieleschmidt
+src/counterfactual_lab/methods/ @danieleschmidt
+
+# Documentation
+docs/ @danieleschmidt
+*.md @danieleschmidt
+
+# Configuration and infrastructure
+.github/ @danieleschmidt
+pyproject.toml @danieleschmidt
+Dockerfile @danieleschmidt
+docker-compose*.yml @danieleschmidt
+
+# Tests
+tests/ @danieleschmidt
+
+# Security and compliance
+SECURITY.md @danieleschmidt
+scripts/security_scan.sh @danieleschmidt
+
+# Dependencies
+.pre-commit-config.yaml @danieleschmidt
+.github/dependabot.yml @danieleschmidt
