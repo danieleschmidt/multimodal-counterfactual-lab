@@ -1,0 +1,72 @@
+site_name: Multimodal Counterfactual Lab
+site_description: A data-generation studio for fairness and robustness research
+site_url: https://counterfactual-lab.readthedocs.io
+repo_url: https://github.com/terragon-labs/multimodal-counterfactual-lab
+repo_name: terragon-labs/multimodal-counterfactual-lab
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: installation.md
+    - Quick Start: quickstart.md
+    - Examples: examples.md
+  - User Guide:
+    - Core Concepts: concepts.md
+    - Counterfactual Generation: generation.md
+    - Bias Evaluation: evaluation.md
+    - CLI Reference: cli.md
+  - Tutorials:
+    - Basic Usage: tutorials/basic.md
+    - Advanced Pipelines: tutorials/advanced.md
+    - Custom Models: tutorials/custom.md
+  - API Reference:
+    - Core: api/core.md
+    - Methods: api/methods.md
+    - Metrics: api/metrics.md
+    - Utils: api/utils.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
