@@ -205,3 +205,36 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Security and secrets
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+credentials/
+
+# Model artifacts and data
+models/
+data/raw/
+data/processed/
+*.pkl
+*.pt
+*.pth
+*.safetensors
+
+# Monitoring and logs
+logs/
+monitoring/
+*.log
+
+# Generated outputs
+outputs/
+results/
+counterfactuals/
+reports/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
