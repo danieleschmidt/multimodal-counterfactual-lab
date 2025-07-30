@@ -2,21 +2,52 @@
 
 ## Overview
 
-This document outlines the security framework and practices for the Multimodal Counterfactual Lab project.
+Comprehensive security measures for AI/ML fairness research and counterfactual generation systems.
+
+## Security Domains
+
+### 1. Code Security
+- **Static Analysis**: CodeQL for vulnerability detection
+- **Dependency Management**: Automated scanning with Safety and pip-audit  
+- **Secret Detection**: TruffleHog for credential exposure prevention
+- **Code Quality**: Bandit security linting integration
+
+### 2. Model Security
+- **Model Validation**: Safe loading and verification of ML models
+- **Input Sanitization**: Robust validation for image and text inputs
+- **Output Filtering**: Prevention of sensitive information leakage
+- **Adversarial Robustness**: Protection against adversarial attacks
+
+### 3. Data Security
+- **Data Anonymization**: Automatic removal of personal identifiers
+- **Secure Storage**: Encrypted storage for sensitive datasets
+- **Access Controls**: Role-based access to model artifacts
+- **Data Lineage**: Tracking of data provenance and transformations
+
+### 4. Infrastructure Security
+- **Container Hardening**: Trivy scanning and minimal base images
+- **Network Security**: Secure communication protocols
+- **Secrets Management**: External secret store integration
+- **Monitoring**: Security event logging and alerting
 
 ## Security Scanning
 
-### Current Implementation
+### Enhanced Implementation
 
-- **Bandit**: Static security analysis for Python code
+- **CodeQL**: Advanced static application security testing
+- **Trivy**: Container vulnerability scanning
+- **Safety**: Python dependency security analysis
+- **pip-audit**: Comprehensive dependency auditing
+- **TruffleHog**: Secret detection in code and commits
+- **Bandit**: Python security linter
 - **Pre-commit hooks**: Automated security checks on commit
-- **Dependabot**: Automated dependency vulnerability scanning
 
 ### Configuration
 
 Security scanning is configured in:
 - `pyproject.toml` - Bandit configuration
 - `.pre-commit-config.yaml` - Pre-commit security hooks
+- `.github/workflows/security.yml` - Automated security scanning
 - `.github/dependabot.yml` - Dependency monitoring
 
 ## Vulnerability Management

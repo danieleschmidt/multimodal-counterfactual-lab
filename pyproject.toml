@@ -71,6 +71,19 @@ test = [
     "pytest-cov>=4.1.0",
     "pytest-xdist>=3.3.0",
     "pytest-mock>=3.11.0",
+    "hypothesis>=6.92.0",
+    "mutmut>=2.4.0",
+]
+security = [
+    "safety>=2.3.0",
+    "pip-audit>=2.6.0",
+    "bandit[toml]>=1.7.5",
+]
+monitoring = [
+    "prometheus-client>=0.19.0",
+    "structlog>=23.2.0",
+    "opentelemetry-api>=1.21.0",
+    "opentelemetry-sdk>=1.21.0",
 ]
 
 [project.scripts]
@@ -167,6 +180,9 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
     "unit: marks tests as unit tests",
+    "contract: marks tests as API contract tests",
+    "property: marks tests as property-based tests",
+    "mutation: marks tests as mutation tests",
 ]
 
 [tool.coverage.run]
@@ -194,3 +210,9 @@ exclude_lines = [
 [tool.bandit]
 exclude_dirs = ["tests"]
 skips = ["B101", "B601"]
+
+[tool.mutmut]
+paths_to_mutate = ["src/counterfactual_lab/"]
+backup = false
+runner = "python -m pytest"
+tests_dir = "tests/"

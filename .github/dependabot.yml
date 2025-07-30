@@ -10,13 +10,27 @@ updates:
     open-pull-requests-limit: 10
     reviewers:
       - "danieleschmidt"
+    assignees:
+      - "danieleschmidt"
     labels:
       - "dependencies"
       - "python"
+      - "security"
     commit-message:
       prefix: "deps"
       prefix-development: "deps-dev"
       include: "scope"
+    # Security-focused updates
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    # Group security updates
+    groups:
+      security-updates:
+        patterns:
+          - "*security*"
+          - "*cve*"
+          - "*vuln*"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"

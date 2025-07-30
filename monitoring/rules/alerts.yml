@@ -1,0 +1,85 @@
+groups:
+  - name: counterfactual-lab-alerts
+    rules:
+      # Application Health
+      - alert: ServiceDown
+        expr: up{job="counterfactual-lab"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Counterfactual Lab service is down"
+          description: "The Counterfactual Lab service has been down for more than 1 minute."
+
+      # Resource Usage
+      - alert: HighMemoryUsage
+        expr: (container_memory_usage_bytes{name="counterfactual-lab"} / container_spec_memory_limit_bytes{name="counterfactual-lab"}) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 90% for 5 minutes."
+
+      - alert: HighCpuUsage
+        expr: rate(container_cpu_usage_seconds_total{name="counterfactual-lab"}[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 80% for 5 minutes."
+
+      # Model Performance
+      - alert: SlowModelInference
+        expr: histogram_quantile(0.95, rate(model_inference_duration_seconds_bucket[5m])) > 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Model inference is slow"
+          description: "95th percentile of model inference time is above 10 seconds."
+
+      - alert: HighErrorRate
+        expr: rate(model_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High model error rate"
+          description: "Model error rate is above 10% for 2 minutes."
+
+      # Security Alerts
+      - alert: SecurityScanFailure
+        expr: increase(security_scan_failures_total[1h]) > 0
+        labels:
+          severity: critical
+        annotations:
+          summary: "Security scan failure detected"
+          description: "A security vulnerability scan has failed."
+
+      - alert: UnauthorizedAccess
+        expr: increase(unauthorized_access_attempts_total[5m]) > 5
+        labels:
+          severity: warning
+        annotations:
+          summary: "Multiple unauthorized access attempts"
+          description: "More than 5 unauthorized access attempts in 5 minutes."
+
+      # Data Quality
+      - alert: BiasThresholdExceeded
+        expr: bias_metric_score > 0.8
+        labels:
+          severity: warning
+        annotations:
+          summary: "Bias threshold exceeded in generated data"
+          description: "Generated counterfactual data shows bias score above acceptable threshold."
+
+      # Storage
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 10
+        labels:
+          severity: critical
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is below 10%."
