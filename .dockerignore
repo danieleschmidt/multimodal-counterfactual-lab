@@ -93,3 +93,34 @@ results/
 .mypy_cache/
 .ruff_cache/
 .pre-commit-cache/
+
+# Security and compliance
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+.secrets
+.env.*
+security-reports/
+vulnerability-reports/
+sbom/
+
+# GitHub Actions and CI
+.github/
+
+# Container security
+Dockerfile.dev
+docker-compose.override.yml
+.hadolint.yaml
+
+# Benchmarks and profiling  
+benchmarks/
+profiling/
+*.prof
+performance-reports/
+
+# Mutation testing
+.mutmut-cache/
+mutation-reports/

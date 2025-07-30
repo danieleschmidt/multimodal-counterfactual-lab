@@ -1,0 +1,86 @@
+# Hadolint configuration for Dockerfile linting
+# Reference: https://github.com/hadolint/hadolint
+
+failure-threshold: error
+
+ignored:
+  # DL3008: Pin versions in apt get install
+  # Disabled because we use --no-install-recommends and security updates
+  # - DL3008
+  
+  # DL3059: Multiple consecutive RUN instructions
+  # Disabled for clarity in multi-stage builds
+  # - DL3059
+
+trustedRegistries:
+  - docker.io
+  - gcr.io
+  - registry.hub.docker.com
+  - python
+
+override:
+  error:
+    - DL3001  # For some cases we really need sudo
+    - DL3002  # Do not switch to root USER
+    - DL3003  # Use WORKDIR to switch to a directory
+    - DL3004  # Do not use sudo
+    - DL3005  # Do not use apt-get dist-upgrade
+    - DL3006  # Always tag the version of an image explicitly
+    - DL3007  # Using latest is prone to errors
+    - DL3008  # Pin versions in apt get install
+    - DL3009  # Delete the apt-get lists after installing something
+    - DL3010  # Use ADD for extracting archives into an image
+    - DL3011  # Valid UNIX ports range from 0 to 65535
+    - DL3012  # Provide an email address or URL as maintainer
+    - DL3013  # Pin versions in pip
+    - DL3014  # Use the -y switch
+    - DL3015  # Avoid additional packages by specifying --no-install-recommends
+    - DL3016  # Pin versions in npm
+    - DL3018  # Pin versions in apk add
+    - DL3019  # Use the --no-cache switch
+    - DL3020  # Use COPY instead of ADD for files and folders
+    - DL3021  # COPY with more than 2 arguments requires the last argument to end with /
+    - DL3022  # COPY --from should reference a previously defined FROM alias
+    - DL3023  # COPY --from should reference a previously defined FROM alias
+    - DL3024  # FROM aliases should be unique
+    - DL3025  # Use arguments JSON notation for CMD and ENTRYPOINT arguments
+    - DL3026  # Use only an allowed registry in the FROM image
+    - DL3027  # Do not use apt as it is meant to be a end-user tool
+
+  warning:
+    - DL3028  # Pin versions in gem install
+    - DL3029  # Do not use --platform flag with FROM
+    - DL3030  # Use the -y switch
+    - DL3032  # Yum clean all missing
+    - DL3033  # Specify version with yum install -y <package>-<version>
+    - DL3034  # Non-interactive switch missing
+    - DL3035  # Do not use zypper dist-upgrade
+    - DL3036  # Specify version with zypper install -y <package>=<version>
+    - DL3037  # Specify version with zypper install -y <package>-<version>
+    - DL3038  # Use the -y switch
+    - DL3040  # php is missing the -y switch
+    - DL3041  # Specify version with dnf install -y <package>-<version>
+    - DL3042  # Avoid cache directory with pip install --no-cache-dir
+    - DL3043  # ONBUILD instruction should be followed by another instruction
+    - DL3044  # Do not use environment variables in the FROM instruction
+    - DL3045  # COPY --from cannot reference later stages
+    - DL3046  # useradd without flag -l and high UID will result in unnecessarily large Image
+    - DL3047  # wget without flag --progress=dot:giga will result in excessively long build output
+    - DL3048  # Invalid label key
+    - DL3049  # Label `<label>` is missing
+    - DL3050  # Superfluous label(s) present
+    - DL3051  # Label `<label>` is empty
+    - DL3052  # Label value should be quoted
+    - DL3053  # Label key should be quoted
+    - DL3054  # Label key is reserved
+    - DL3055  # Label value is empty
+    - DL3056  # Label value should not be quoted
+    - DL3057  # HEALTHCHECK instruction missing
+
+  info:
+    - DL3058  # Label `<label>` is not a valid URL
+    - DL3059  # Multiple consecutive RUN instructions
+    - DL3060  # `yarn cache clean` is not needed
+
+# Enforce specific rules for security
+format: json
