@@ -1,0 +1,79 @@
+# GitHub Release Configuration
+# Automatically categorizes pull requests in release notes
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - duplicate
+      - invalid
+      - wontfix
+      - dependencies
+    authors:
+      - dependabot
+      - github-actions[bot]
+      
+  categories:
+    - title: 🚀 New Features
+      labels:
+        - feature
+        - enhancement
+        - new-feature
+        
+    - title: 🐛 Bug Fixes
+      labels:
+        - bug
+        - bugfix
+        - fix
+        
+    - title: 🔒 Security
+      labels:
+        - security
+        - vulnerability
+        - cve
+        
+    - title: 📚 Documentation
+      labels:
+        - documentation
+        - docs
+        
+    - title: 🧪 Testing
+      labels:
+        - testing
+        - tests
+        - test
+        
+    - title: 🏗️ Infrastructure
+      labels:
+        - infrastructure
+        - ci
+        - cd
+        - deployment
+        - docker
+        
+    - title: ⚡ Performance
+      labels:
+        - performance
+        - optimization
+        - speed
+        
+    - title: 🔧 Maintenance
+      labels:
+        - maintenance
+        - refactor
+        - cleanup
+        - chore
+        
+    - title: 📦 Dependencies
+      labels:
+        - dependencies
+        - deps
+        
+    - title: 🚨 Breaking Changes
+      labels:
+        - breaking-change
+        - major
+        
+    - title: Other Changes
+      labels:
+        - "*"

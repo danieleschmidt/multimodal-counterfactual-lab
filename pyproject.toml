@@ -60,6 +60,8 @@ dev = [
     "mkdocs>=1.5.0",
     "mkdocs-material>=9.1.0",
     "mkdocstrings[python]>=0.22.0",
+    "mutpy>=0.6.1",
+    "mutmut>=2.4.3",
 ]
 docs = [
     "mkdocs>=1.5.0",
@@ -71,6 +73,12 @@ test = [
     "pytest-cov>=4.1.0",
     "pytest-xdist>=3.3.0",
     "pytest-mock>=3.11.0",
+]
+security = [
+    "bandit[toml]>=1.7.5",
+    "safety>=2.3.0",
+    "pip-audit>=2.6.0",
+    "cyclonedx-bom>=4.0.0",
 ]
 
 [project.scripts]
@@ -167,6 +175,7 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
     "unit: marks tests as unit tests",
+    "mutation: marks tests for mutation testing",
 ]
 
 [tool.coverage.run]
@@ -194,3 +203,23 @@ exclude_lines = [
 [tool.bandit]
 exclude_dirs = ["tests"]
 skips = ["B101", "B601"]
+
+# Mutation Testing Configuration
+[tool.mutmut]
+paths_to_mutate = "src/"
+backup = false
+runner = "python -m pytest"
+tests_dir = "tests/"
+dict_synonyms = ["Struct", "NamedStruct"]
+total = 500
+suspicious_policy = "ignore"
+untested_policy = "ignore"
+
+[tool.mutpy]
+target = "src/counterfactual_lab"
+unit-test = "tests"
+runner = "pytest"
+report = ["html", "json"]
+timeout = 300
+disable-operator = ["AOD", "COD", "COI", "CRP", "DDL", "EHD", "EXS", "IHD", "IOD", "IOP", "LCR", "LOD", "LOR", "ROR", "SCD", "SCI", "SIR"]
+exclude = ["__init__.py", "setup.py"]
