@@ -1,0 +1,70 @@
+{
+    "python.defaultInterpreterPath": "./venv/bin/python",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": false,
+    "python.linting.banditEnabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [
+        "--line-length=88"
+    ],
+    "python.sortImports.args": [
+        "--profile=black"
+    ],
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+        "source.fixAll": true
+    },
+    "editor.rulers": [88],
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.pytest_cache": true,
+        "**/.mypy_cache": true,
+        "**/.ruff_cache": true,
+        "**/htmlcov": true,
+        "**/.coverage": true,
+        "**/dist": true,
+        "**/build": true,
+        "**/*.egg-info": true,
+        "**/models": true,
+        "**/data/raw": true,
+        "**/outputs": true,
+        "**/results": true
+    },
+    "files.watcherExclude": {
+        "**/models/**": true,
+        "**/data/raw/**": true,
+        "**/outputs/**": true,
+        "**/results/**": true
+    },
+    "json.schemas": [
+        {
+            "fileMatch": ["pyproject.toml"],
+            "url": "https://json.schemastore.org/pyproject.json"
+        }
+    ],
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml"
+    },
+    "ruff.args": ["--config=pyproject.toml"],
+    "mypy.configFile": "pyproject.toml",
+    "jupyter.askForKernelRestart": false,
+    "jupyter.interactiveWindow.textEditor.executeSelection": true,
+    "git.ignoreLimitWarning": true,
+    "search.exclude": {
+        "**/models": true,
+        "**/data/raw": true,
+        "**/outputs": true,
+        "**/results": true,
+        "**/.venv": true,
+        "**/venv": true
+    }
+}

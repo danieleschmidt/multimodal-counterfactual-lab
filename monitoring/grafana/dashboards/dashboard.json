@@ -1,0 +1,33 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Counterfactual Lab Metrics",
+    "description": "Monitoring dashboard for Multimodal Counterfactual Lab",
+    "version": 1,
+    "schemaVersion": 30,
+    "panels": [
+      {
+        "id": 1,
+        "title": "Generation Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(generations_total[5m])",
+            "legendFormat": "Generations/sec"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "process_resident_memory_bytes / 1024 / 1024",
+            "legendFormat": "Memory (MB)"
+          }
+        ]
+      }
+    ]
+  }
+}
