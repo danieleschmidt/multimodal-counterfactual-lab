@@ -1,0 +1,44 @@
+# Core dependencies for multimodal-counterfactual-lab
+# Generated from pyproject.toml
+# This file is used for reproducible builds
+
+accelerate==0.30.1
+    # via multimodal-counterfactual-lab (pyproject.toml)
+aif360==0.6.1
+    # via multimodal-counterfactual-lab (pyproject.toml)
+albumentations==1.4.10
+    # via multimodal-counterfactual-lab (pyproject.toml)
+click==8.1.7
+    # via multimodal-counterfactual-lab (pyproject.toml)
+diffusers==0.27.2
+    # via multimodal-counterfactual-lab (pyproject.toml)
+fairlearn==0.10.0
+    # via multimodal-counterfactual-lab (pyproject.toml)
+kornia==0.7.2
+    # via multimodal-counterfactual-lab (pyproject.toml)
+matplotlib==3.8.4
+    # via multimodal-counterfactual-lab (pyproject.toml)
+numpy==1.26.4
+    # via multimodal-counterfactual-lab (pyproject.toml)
+opencv-python==4.9.0.80
+    # via multimodal-counterfactual-lab (pyproject.toml)
+pandas==2.2.2
+    # via multimodal-counterfactual-lab (pyproject.toml)
+pillow==10.3.0
+    # via multimodal-counterfactual-lab (pyproject.toml)
+plotly==5.22.0
+    # via multimodal-counterfactual-lab (pyproject.toml)
+pydantic==2.7.1
+    # via multimodal-counterfactual-lab (pyproject.toml)
+scikit-learn==1.4.2
+    # via multimodal-counterfactual-lab (pyproject.toml)
+seaborn==0.13.2
+    # via multimodal-counterfactual-lab (pyproject.toml)
+streamlit==1.35.0
+    # via multimodal-counterfactual-lab (pyproject.toml)
+torch==2.3.0
+    # via multimodal-counterfactual-lab (pyproject.toml)
+tqdm==4.66.4
+    # via multimodal-counterfactual-lab (pyproject.toml)
+transformers==4.41.2
+    # via multimodal-counterfactual-lab (pyproject.toml)
