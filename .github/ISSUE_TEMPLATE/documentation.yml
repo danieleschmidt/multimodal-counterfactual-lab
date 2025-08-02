@@ -1,0 +1,79 @@
+name: Documentation Issue
+description: Report missing, unclear, or incorrect documentation
+title: "[DOCS] "
+labels: ["documentation", "needs-triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve our documentation! Please provide details about the documentation issue.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation issue is this?
+      options:
+        - Missing documentation
+        - Incorrect information
+        - Unclear explanation
+        - Broken links
+        - Outdated content
+        - Example code issues
+        - API reference issues
+        - Tutorial improvements
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Documentation Location
+      description: Where is the documentation issue located?
+      placeholder: |
+        - URL: https://...
+        - File: docs/...
+        - Section: Getting Started -> Installation
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Issue Description
+      description: Describe the documentation issue
+      placeholder: What's wrong with the current documentation?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Content
+      description: What should the documentation say instead?
+      placeholder: How should this be documented?
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: How does this affect users?
+      placeholder: Who is affected and how?
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: Do you have a specific suggestion for improvement?
+      placeholder: Your suggestion for better documentation...
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to help improve the documentation?
+      options:
+        - label: I can submit a PR to fix this
+        - label: I can provide feedback on proposed changes
+        - label: I can help with review
