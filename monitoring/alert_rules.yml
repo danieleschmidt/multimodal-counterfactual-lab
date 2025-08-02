@@ -1,47 +1,227 @@
 groups:
-  - name: counterfactual-lab-alerts
+  - name: counterfactual-lab-critical
     rules:
-      - alert: HighMemoryUsage
-        expr: (process_resident_memory_bytes / 1024 / 1024) > 1000
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High memory usage detected"
-          description: "Memory usage is above 1GB for more than 5 minutes"
-
-      - alert: HighCPUUsage
-        expr: rate(process_cpu_seconds_total[5m]) * 100 > 80
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High CPU usage detected"
-          description: "CPU usage is above 80% for more than 5 minutes"
-
-      - alert: ModelGenerationLatency
-        expr: histogram_quantile(0.95, rate(generation_duration_seconds_bucket[5m])) > 30
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High model generation latency"
-          description: "95th percentile generation time is above 30 seconds"
-
-      - alert: FailedGenerations
-        expr: rate(generation_errors_total[5m]) > 0.1
-        for: 5m
-        labels:
-          severity: critical
-        annotations:
-          summary: "High generation failure rate"
-          description: "Generation error rate is above 10% for more than 5 minutes"
-
       - alert: ServiceDown
-        expr: up == 0
+        expr: up{job="counterfactual-lab"} == 0
         for: 1m
         labels:
           severity: critical
+          service: counterfactual-lab
         annotations:
-          summary: "Service is down"
-          description: "{{ $labels.job }} has been down for more than 1 minute"
+          summary: "Counterfactual Lab service is down"
+          description: "The main application service has been down for more than 1 minute. Immediate action required."
+          runbook_url: "https://docs.example.com/runbooks/service-down"
+
+      - alert: HighErrorRate
+        expr: cf_lab:error_rate:rate5m > 0.1
+        for: 2m
+        labels:
+          severity: critical
+          service: counterfactual-lab
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }}, above 10% threshold for more than 2 minutes"
+          runbook_url: "https://docs.example.com/runbooks/high-error-rate"
+
+      - alert: DatabaseConnectionFailed
+        expr: up{job="postgres-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "Database connection failed"
+          description: "Cannot connect to PostgreSQL database for more than 1 minute"
+          runbook_url: "https://docs.example.com/runbooks/database-down"
+
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis service is down"
+          description: "Redis cache service is unavailable for more than 1 minute"
+
+      - alert: ExtremelyHighLatency
+        expr: cf_lab:latency_99th:5m > 60
+        for: 5m
+        labels:
+          severity: critical
+          service: counterfactual-lab
+        annotations:
+          summary: "Extremely high response latency"
+          description: "99th percentile latency is {{ $value }}s, above 60s threshold"
+
+  - name: counterfactual-lab-warnings
+    rules:
+      - alert: HighMemoryUsage
+        expr: cf_lab:memory_usage_bytes / 1024 / 1024 / 1024 > 3
+        for: 5m
+        labels:
+          severity: warning
+          service: counterfactual-lab
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanize }}GB, above 3GB threshold"
+          runbook_url: "https://docs.example.com/runbooks/high-memory"
+
+      - alert: HighCPUUsage
+        expr: cf_lab:cpu_usage:rate5m * 100 > 80
+        for: 10m
+        labels:
+          severity: warning
+          service: counterfactual-lab
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value | humanizePercentage }}, above 80% for more than 10 minutes"
+
+      - alert: ModelGenerationLatency
+        expr: cf_lab:generation_duration_seconds:rate5m > 30
+        for: 5m
+        labels:
+          severity: warning
+          service: counterfactual-lab
+        annotations:
+          summary: "High model generation latency"
+          description: "Average generation time is {{ $value }}s, above 30s threshold"
+          runbook_url: "https://docs.example.com/runbooks/slow-generation"
+
+      - alert: LowGenerationSuccessRate
+        expr: cf_lab:generation_success_rate:rate5m < 0.95
+        for: 5m
+        labels:
+          severity: warning
+          service: counterfactual-lab
+        annotations:
+          summary: "Low generation success rate" 
+          description: "Generation success rate is {{ $value | humanizePercentage }}, below 95% threshold"
+
+      - alert: HighDiskUsage
+        expr: instance:disk_utilization > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High disk usage on {{ $labels.instance }}"
+          description: "Disk usage is {{ $value | humanizePercentage }}, above 85% threshold"
+
+      - alert: LowModelCacheHitRate
+        expr: cf_lab:model_cache_hit_rate:rate5m < 0.8
+        for: 10m
+        labels:
+          severity: warning
+          service: counterfactual-lab
+        annotations:
+          summary: "Low model cache hit rate"
+          description: "Cache hit rate is {{ $value | humanizePercentage }}, below 80% threshold"
+
+  - name: counterfactual-lab-quality
+    rules:
+      - alert: LowQualityScore
+        expr: cf_lab:quality_score:avg5m < 0.8
+        for: 10m
+        labels:
+          severity: warning
+          service: counterfactual-lab
+        annotations:
+          summary: "Low quality score detected"
+          description: "Average quality score is {{ $value }}, below 0.8 threshold"
+          runbook_url: "https://docs.example.com/runbooks/quality-degradation"
+
+      - alert: HighBiasScore
+        expr: cf_lab:bias_score:avg5m > 0.2
+        for: 10m
+        labels:
+          severity: warning
+          service: counterfactual-lab
+        annotations:
+          summary: "High bias score detected"
+          description: "Average bias score is {{ $value }}, above 0.2 threshold - potential fairness issue"
+          runbook_url: "https://docs.example.com/runbooks/bias-detection"
+
+      - alert: ModelDrift
+        expr: abs(cf_lab:quality_score:avg5m - cf_lab:quality_score:avg5m offset 24h) > 0.1
+        for: 30m
+        labels:
+          severity: warning
+          service: counterfactual-lab
+        annotations:
+          summary: "Model quality drift detected"
+          description: "Quality score has drifted by {{ $value }} compared to 24h ago"
+
+  - name: infrastructure-alerts
+    rules:
+      - alert: HostHighCPU
+        expr: instance:cpu_utilization:rate5m > 90
+        for: 10m
+        labels:
+          severity: warning
+          service: infrastructure
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanizePercentage }}, above 90% threshold"
+
+      - alert: HostHighMemory
+        expr: instance:memory_utilization > 90
+        for: 5m
+        labels:
+          severity: warning
+          service: infrastructure
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value | humanizePercentage }}, above 90% threshold"
+
+      - alert: ContainerRestarting
+        expr: increase(container_restart_count[1h]) > 3
+        for: 0m
+        labels:
+          severity: warning
+          service: infrastructure
+        annotations:
+          summary: "Container {{ $labels.container }} is restarting frequently"
+          description: "Container has restarted {{ $value }} times in the last hour"
+
+      - alert: SSLCertificateExpiry
+        expr: probe_ssl_earliest_cert_expiry - time() < 30 * 24 * 3600
+        for: 0m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration }}"
+
+  - name: business-alerts
+    rules:
+      - alert: LowDailyActiveUsers
+        expr: cf_lab:daily_active_users < 10
+        for: 24h
+        labels:
+          severity: info
+          service: business
+        annotations:
+          summary: "Low daily active user count"
+          description: "Only {{ $value }} active users in the last 24 hours"
+
+      - alert: HighAPIUsage
+        expr: cf_lab:api_usage:rate1h > 1000
+        for: 5m
+        labels:
+          severity: info
+          service: business
+        annotations:
+          summary: "High API usage detected"
+          description: "API usage is {{ $value }} requests/hour, above 1000 threshold"
+
+      - alert: StorageQuotaWarning
+        expr: cf_lab:storage_usage_bytes / 1024 / 1024 / 1024 > 50
+        for: 1h
+        labels:
+          severity: warning
+          service: storage
+        annotations:
+          summary: "Storage usage approaching limit"
+          description: "Storage usage is {{ $value | humanize }}GB, approaching 50GB limit"

@@ -1,0 +1,115 @@
+# Security-hardened multi-stage build for production deployment
+FROM python:3.11-slim as security-base
+
+# Security metadata and labels
+LABEL maintainer="daniel@terragon.ai" \
+      version="0.1.0" \
+      security.scan="enabled" \
+      security.policy="hardened" \
+      org.opencontainers.image.source="https://github.com/terragon-labs/multimodal-counterfactual-lab" \
+      org.opencontainers.image.description="Multimodal Counterfactual Lab - Security Hardened" \
+      org.opencontainers.image.licenses="MIT"
+
+# Install security updates and minimal dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    gnupg \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+    && rm -rf /tmp/* /var/tmp/*
+
+# Create restricted user and group
+RUN groupadd --gid 10001 appgroup \
+    && useradd --uid 10001 --gid appgroup --create-home --shell /sbin/nologin appuser \
+    && mkdir -p /app /app/src /app/data /app/outputs /app/logs \
+    && chown -R appuser:appgroup /app
+
+# Build stage
+FROM security-base as builder
+
+# Install build dependencies with security updates
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+WORKDIR /app
+
+# Copy dependency files first (better caching)
+COPY pyproject.toml README.md ./
+COPY src/ ./src/
+
+# Install Python dependencies with security checks
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir -e . \
+    && pip install --no-cache-dir safety bandit \
+    && safety check --json --output safety-report.json || true \
+    && bandit -r src/ -f json -o bandit-report.json || true
+
+# Production stage
+FROM security-base as production
+
+# Install minimal runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libgl1-mesa-glx \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+    && rm -rf /tmp/* /var/tmp/*
+
+# Switch to non-root user early
+USER appuser
+WORKDIR /app
+
+# Set security-focused environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app/src \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    MALLOC_ARENA_MAX=2 \
+    PYTHONHASHSEED=random \
+    HOME=/app
+
+# Copy installed packages and application code
+COPY --from=builder --chown=appuser:appgroup /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder --chown=appuser:appgroup /usr/local/bin /usr/local/bin
+COPY --from=builder --chown=appuser:appgroup /app/src ./src
+
+# Copy security reports
+COPY --from=builder --chown=appuser:appgroup /app/*-report.json ./security/
+
+# Set strict file permissions
+USER root
+RUN chmod -R 755 /app \
+    && chmod -R 644 /app/src \
+    && find /app -type f -name "*.py" -exec chmod 644 {} \; \
+    && chmod -R 700 /app/security
+USER appuser
+
+# Use non-privileged port
+EXPOSE 8080
+
+# Health check with timeout
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+# Set resource limits (if supported by runtime)
+# These should be enforced by container orchestration
+
+# Security-hardened startup command
+CMD ["python", "-u", "-m", "counterfactual_lab.app", \
+     "--host", "0.0.0.0", \
+     "--port", "8080", \
+     "--workers", "1", \
+     "--access-log", \
+     "--security-headers"]
