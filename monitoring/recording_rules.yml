@@ -1,0 +1,117 @@
+groups:
+  - name: counterfactual_lab_recording_rules
+    interval: 30s
+    rules:
+      # Application performance metrics
+      - record: cf_lab:request_duration_seconds:rate5m
+        expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
+        
+      - record: cf_lab:request_rate:rate5m
+        expr: rate(http_requests_total[5m])
+        
+      - record: cf_lab:error_rate:rate5m
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
+
+      # Generation performance metrics
+      - record: cf_lab:generation_duration_seconds:rate5m
+        expr: rate(counterfactual_generation_duration_seconds_sum[5m]) / rate(counterfactual_generation_duration_seconds_count[5m])
+        
+      - record: cf_lab:generation_rate:rate5m
+        expr: rate(counterfactual_generation_total[5m])
+        
+      - record: cf_lab:generation_success_rate:rate5m
+        expr: rate(counterfactual_generation_total{status="success"}[5m]) / rate(counterfactual_generation_total[5m])
+
+      # Model performance metrics
+      - record: cf_lab:model_inference_duration_seconds:rate5m
+        expr: rate(model_inference_duration_seconds_sum[5m]) / rate(model_inference_duration_seconds_count[5m])
+        
+      - record: cf_lab:model_cache_hit_rate:rate5m
+        expr: rate(model_cache_hits_total[5m]) / (rate(model_cache_hits_total[5m]) + rate(model_cache_misses_total[5m]))
+
+      # Resource utilization
+      - record: cf_lab:cpu_usage:rate5m
+        expr: rate(process_cpu_seconds_total[5m])
+        
+      - record: cf_lab:memory_usage_bytes
+        expr: process_resident_memory_bytes
+        
+      - record: cf_lab:gpu_memory_usage_bytes
+        expr: nvidia_ml_py_memory_used_bytes
+
+      # Quality metrics
+      - record: cf_lab:quality_score:avg5m
+        expr: avg_over_time(counterfactual_quality_score[5m])
+        
+      - record: cf_lab:bias_score:avg5m
+        expr: avg_over_time(bias_evaluation_score[5m])
+
+  - name: system_recording_rules
+    interval: 15s
+    rules:
+      # System resource utilization
+      - record: instance:cpu_utilization:rate5m
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+        
+      - record: instance:memory_utilization
+        expr: 100 - ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100)
+        
+      - record: instance:disk_utilization
+        expr: 100 - ((node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100)
+        
+      - record: instance:network_receive_bytes:rate5m
+        expr: rate(node_network_receive_bytes_total[5m])
+        
+      - record: instance:network_transmit_bytes:rate5m
+        expr: rate(node_network_transmit_bytes_total[5m])
+
+  - name: container_recording_rules
+    interval: 15s
+    rules:
+      # Container resource utilization
+      - record: container:cpu_usage:rate5m
+        expr: rate(container_cpu_usage_seconds_total[5m])
+        
+      - record: container:memory_usage_bytes
+        expr: container_memory_usage_bytes
+        
+      - record: container:network_receive_bytes:rate5m
+        expr: rate(container_network_receive_bytes_total[5m])
+        
+      - record: container:network_transmit_bytes:rate5m
+        expr: rate(container_network_transmit_bytes_total[5m])
+
+  - name: business_metrics_recording_rules
+    interval: 60s
+    rules:
+      # Business KPIs
+      - record: cf_lab:daily_active_users
+        expr: count(increase(user_sessions_total[24h]))
+        
+      - record: cf_lab:generations_per_user:avg24h
+        expr: avg(increase(counterfactual_generation_total[24h])) by (user_id)
+        
+      - record: cf_lab:api_usage:rate1h
+        expr: rate(api_requests_total[1h])
+        
+      - record: cf_lab:storage_usage_bytes
+        expr: sum(prometheus_tsdb_symbol_table_size_bytes + prometheus_tsdb_head_series + prometheus_tsdb_wal_size_bytes)
+
+  - name: sli_recording_rules
+    interval: 30s
+    rules:
+      # Service Level Indicators (SLIs)
+      - record: cf_lab:availability:rate5m
+        expr: avg_over_time(up{job="counterfactual-lab"}[5m])
+        
+      - record: cf_lab:latency_95th:5m
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+        
+      - record: cf_lab:latency_99th:5m
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
+        
+      - record: cf_lab:throughput:rate5m
+        expr: sum(rate(http_requests_total[5m]))
+        
+      - record: cf_lab:error_budget_burn_rate:1h
+        expr: (1 - cf_lab:availability:rate5m) / (1 - 0.99)  # Assuming 99% SLO
