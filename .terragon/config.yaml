@@ -1,0 +1,108 @@
+# Terragon Autonomous SDLC Configuration
+# Repository: multimodal-counterfactual-lab
+# Maturity Level: MATURING (65-70%)
+
+repository:
+  name: "multimodal-counterfactual-lab"
+  type: "ml-research"
+  maturity_level: "maturing"
+  primary_language: "python"
+  domain: "fairness-ai"
+
+scoring:
+  weights:
+    maturing:
+      wsjf: 0.6        # Weighted Shortest Job First
+      ice: 0.1         # Impact, Confidence, Ease
+      technicalDebt: 0.2
+      security: 0.1
+  
+  thresholds:
+    minScore: 15
+    maxRisk: 0.7
+    securityBoost: 2.0
+    complianceBoost: 1.8
+    mlSpecificBoost: 1.5  # Boost for ML/AI specific improvements
+
+discovery:
+  sources:
+    - gitHistory
+    - staticAnalysis  
+    - issueTrackers
+    - vulnerabilityDatabases
+    - performanceMonitoring
+    - mlModelMetrics
+    - researchMetrics
+  
+  tools: 
+    staticAnalysis:
+      - ruff
+      - mypy
+      - bandit
+      - vulture  # Dead code detection
+    security:
+      - safety
+      - pip-audit
+      - semgrep
+    mlSpecific:
+      - modelValidation
+      - dataQualityChecks
+      - fairnessMetrics
+      - driftDetection
+    performance:
+      - pytest-benchmark
+      - memory-profiler
+      - py-spy
+
+execution:
+  maxConcurrentTasks: 1
+  testRequirements:
+    minCoverage: 80
+    performanceRegression: 10  # 10% tolerance
+    securityGates: true
+    mlValidationGates: true
+  rollbackTriggers:
+    - testFailure
+    - buildFailure  
+    - securityViolation
+    - performanceRegression
+    - mlModelDegradation
+
+mlSpecific:
+  # ML/AI specific configurations
+  modelTracking:
+    enabled: true
+    platforms: ["huggingface", "local"]
+  datasetTracking:
+    enabled: true
+    validation: true
+  fairnessMonitoring:
+    enabled: true
+    metrics: ["demographic_parity", "equalized_odds", "cits_score"]
+  experimentTracking:
+    enabled: true
+    framework: "mlflow"
+
+priorities:
+  # Current high-priority areas for this repository
+  immediate:
+    - "Deploy CI/CD workflows from templates"
+    - "Activate security scanning automation"  
+    - "Implement core counterfactual generation methods"
+  shortTerm:
+    - "Add model drift detection"
+    - "Implement fairness evaluation metrics"
+    - "Create interactive documentation"
+  longTerm:
+    - "Advanced ML monitoring and alerting"
+    - "Automated model retraining pipelines"
+    - "Research collaboration features"
+
+notifications:
+  slack:
+    enabled: false
+  email:
+    enabled: false
+  github:
+    enabled: true
+    createIssues: true

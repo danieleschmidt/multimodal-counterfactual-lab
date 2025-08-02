@@ -1,0 +1,62 @@
+# Enhanced Dependabot configuration for security-focused updates
+# Reference: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Python dependency security updates
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "@terragon-labs/security-team"
+    assignees:
+      - "@terragon-labs/maintainers"
+    labels:
+      - "security"
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "security"
+      include: "scope"
+    # Critical security updates
+    allow:
+      - dependency-type: "direct"
+        update-type: "security"
+      - dependency-type: "indirect"
+        update-type: "security"
+    # Vulnerability alerts only for production dependencies
+    target-branch: "main"
+    
+  # Docker base image security updates  
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "UTC"
+    reviewers:
+      - "@terragon-labs/security-team"
+    labels:
+      - "security"
+      - "docker"
+      - "automated"
+      
+  # GitHub Actions security updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly" 
+      day: "tuesday"
+      time: "04:00"
+      timezone: "UTC"
+    reviewers:
+      - "@terragon-labs/security-team"
+    labels:
+      - "security"
+      - "github-actions"
+      - "automated"

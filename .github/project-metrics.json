@@ -1,0 +1,210 @@
+{
+  "project": {
+    "name": "Multimodal Counterfactual Lab",
+    "description": "Data-generation studio for counterfactual image-text pairs",
+    "version": "1.0.0",
+    "repository": "danieleschmidt/multimodal-counterfactual-lab",
+    "license": "MIT",
+    "created": "2024-12-15",
+    "last_updated": "2025-08-02"
+  },
+  "metrics": {
+    "code_quality": {
+      "test_coverage": {
+        "target": 85,
+        "current": 0,
+        "unit": "percentage",
+        "trend": "stable",
+        "last_measured": null
+      },
+      "code_duplication": {
+        "target": 5,
+        "current": 0,
+        "unit": "percentage",
+        "trend": "stable",
+        "last_measured": null
+      },
+      "cyclomatic_complexity": {
+        "target": 8,
+        "current": 0,
+        "unit": "average",
+        "trend": "stable",
+        "last_measured": null
+      },
+      "maintainability_index": {
+        "target": 80,
+        "current": 0,
+        "unit": "score",
+        "trend": "stable",
+        "last_measured": null
+      }
+    },
+    "security": {
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "last_scan": null
+      },
+      "dependency_vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "last_scan": null
+      },
+      "secret_leaks": {
+        "count": 0,
+        "last_scan": null
+      }
+    },
+    "performance": {
+      "build_time": {
+        "target": 300,
+        "current": 0,
+        "unit": "seconds",
+        "trend": "stable",
+        "last_measured": null
+      },
+      "test_execution_time": {
+        "target": 120,
+        "current": 0,
+        "unit": "seconds",
+        "trend": "stable",
+        "last_measured": null
+      },
+      "docker_build_time": {
+        "target": 600,
+        "current": 0,
+        "unit": "seconds",
+        "trend": "stable",
+        "last_measured": null
+      },
+      "memory_usage": {
+        "target": 2048,
+        "current": 0,
+        "unit": "MB",
+        "trend": "stable",
+        "last_measured": null
+      }
+    },
+    "development": {
+      "lines_of_code": {
+        "total": 0,
+        "source": 0,
+        "tests": 0,
+        "documentation": 0,
+        "last_counted": null
+      },
+      "technical_debt": {
+        "hours": 0,
+        "rating": "A",
+        "last_calculated": null
+      },
+      "code_churn": {
+        "weekly_average": 0,
+        "monthly_average": 0,
+        "last_calculated": null
+      }
+    },
+    "collaboration": {
+      "contributors": {
+        "total": 1,
+        "active_monthly": 1,
+        "last_counted": null
+      },
+      "pull_requests": {
+        "open": 0,
+        "merged_monthly": 0,
+        "average_time_to_merge": 0,
+        "last_calculated": null
+      },
+      "issues": {
+        "open": 0,
+        "closed_monthly": 0,
+        "average_time_to_close": 0,
+        "last_calculated": null
+      }
+    },
+    "documentation": {
+      "coverage": {
+        "api_documentation": 0,
+        "user_guides": 0,
+        "examples": 0,
+        "unit": "percentage",
+        "last_measured": null
+      },
+      "freshness": {
+        "outdated_docs": 0,
+        "last_updated_days": 0,
+        "last_calculated": null
+      }
+    },
+    "deployment": {
+      "deployment_frequency": {
+        "per_week": 0,
+        "last_calculated": null
+      },
+      "lead_time": {
+        "average_hours": 0,
+        "last_calculated": null
+      },
+      "mean_time_to_recovery": {
+        "average_hours": 0,
+        "last_calculated": null
+      },
+      "change_failure_rate": {
+        "percentage": 0,
+        "last_calculated": null
+      }
+    },
+    "usage": {
+      "downloads": {
+        "total": 0,
+        "monthly": 0,
+        "last_counted": null
+      },
+      "stars": {
+        "total": 0,
+        "growth_rate": 0,
+        "last_counted": null
+      },
+      "forks": {
+        "total": 0,
+        "last_counted": null
+      }
+    }
+  },
+  "thresholds": {
+    "code_quality": {
+      "test_coverage": 85,
+      "code_duplication": 5,
+      "cyclomatic_complexity": 8,
+      "maintainability_index": 80
+    },
+    "security": {
+      "max_critical_vulnerabilities": 0,
+      "max_high_vulnerabilities": 2,
+      "max_secret_leaks": 0
+    },
+    "performance": {
+      "max_build_time": 300,
+      "max_test_time": 120,
+      "max_docker_build_time": 600,
+      "max_memory_usage": 2048
+    }
+  },
+  "reporting": {
+    "frequency": "weekly",
+    "recipients": ["danieleschmidt"],
+    "channels": ["github-discussions", "email"],
+    "dashboard_url": null
+  },
+  "automation": {
+    "enabled": true,
+    "collection_schedule": "0 6 * * 1",
+    "alert_thresholds": true,
+    "auto_update": true
+  }
+}

@@ -1,0 +1,31 @@
+# Development dependencies for multimodal-counterfactual-lab
+# Generated from pyproject.toml [dev] extra
+# This file is used for reproducible development environments
+
+black==24.4.2
+    # via multimodal-counterfactual-lab (pyproject.toml)
+mkdocs==1.6.0
+    # via multimodal-counterfactual-lab (pyproject.toml)
+mkdocs-material==9.5.25
+    # via multimodal-counterfactual-lab (pyproject.toml)
+mkdocstrings[python]==0.25.1
+    # via multimodal-counterfactual-lab (pyproject.toml)
+mutmut==2.4.3
+    # via multimodal-counterfactual-lab (pyproject.toml)
+mutpy==0.6.1
+    # via multimodal-counterfactual-lab (pyproject.toml)
+mypy==1.10.0
+    # via multimodal-counterfactual-lab (pyproject.toml)
+pre-commit==3.7.1
+    # via multimodal-counterfactual-lab (pyproject.toml)
+pytest==8.2.2
+    # via multimodal-counterfactual-lab (pyproject.toml)
+pytest-cov==5.0.0
+    # via multimodal-counterfactual-lab (pyproject.toml)
+pytest-xdist==3.6.0
+    # via multimodal-counterfactual-lab (pyproject.toml)
+ruff==0.4.8
+    # via multimodal-counterfactual-lab (pyproject.toml)
+
+# Include all core dependencies
+-r requirements.txt
