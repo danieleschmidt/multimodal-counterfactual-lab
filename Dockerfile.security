@@ -1,5 +1,5 @@
 # Security-hardened multi-stage build for production deployment
-FROM python:3.11-slim as security-base
+FROM python:3.13-slim as security-base
 
 # Security metadata and labels
 LABEL maintainer="daniel@terragon.ai" \
