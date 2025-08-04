@@ -366,9 +366,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 @software{multimodal_counterfactual_lab,
   title={Multimodal Counterfactual Lab: Automated Fairness Testing for VLMs},
-  author={Your Name},
+  author={Daniel Schmidt},
   year={2025},
-  url={https://github.com/yourusername/multimodal-counterfactual-lab}
+  url={https://github.com/danieleschmidt/multimodal-counterfactual-lab}
 }
 ```
 
