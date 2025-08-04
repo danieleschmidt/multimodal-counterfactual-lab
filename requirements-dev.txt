@@ -20,7 +20,7 @@ pre-commit==3.7.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 pytest==8.2.2
     # via multimodal-counterfactual-lab (pyproject.toml)
-pytest-cov==5.0.0
+pytest-cov==6.2.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 pytest-xdist==3.6.0
     # via multimodal-counterfactual-lab (pyproject.toml)
