@@ -16,7 +16,7 @@ fairlearn==0.10.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 kornia==0.7.2
     # via multimodal-counterfactual-lab (pyproject.toml)
-matplotlib==3.8.4
+matplotlib==3.10.5
     # via multimodal-counterfactual-lab (pyproject.toml)
 numpy==1.26.4
     # via multimodal-counterfactual-lab (pyproject.toml)
