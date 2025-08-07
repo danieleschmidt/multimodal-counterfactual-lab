@@ -1,0 +1,29 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7F888E08A810>",
+  "original_text": "A person in a room",
+  "target_attributes": [
+    "gender"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "female"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7F888BCD8BC0>",
+      "generated_text": "A a woman in a room",
+      "confidence": 0.975480879196682,
+      "explanation": "Modified gender while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.00781,
+    "num_samples": 1,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:50:21.544670",
+    "image_hash": "f87b51efeb913df8",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

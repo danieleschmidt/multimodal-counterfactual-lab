@@ -1,0 +1,29 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC785E1FFB0>",
+  "original_text": "An engineer designing a product",
+  "target_attributes": [
+    "gender"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "non-binary"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC7888738F0>",
+      "generated_text": "a person, An engineer designing a product",
+      "confidence": 0.8478402519802412,
+      "explanation": "Modified gender while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.011196,
+    "num_samples": 1,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:52:32.774662",
+    "image_hash": "fc40059bcba721f3",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

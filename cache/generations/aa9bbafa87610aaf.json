@@ -1,0 +1,31 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7FEBC86E5E80>",
+  "original_text": "Valid text",
+  "target_attributes": [
+    "gender",
+    "age"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "non-binary",
+        "age": "elderly"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7FEBC8972A50>",
+      "generated_text": "a person elderly, Valid text",
+      "confidence": 0.8458986502577932,
+      "explanation": "Modified gender, age while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.003782,
+    "num_samples": 1,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:49:33.755461",
+    "image_hash": "e0e0bf19ea1eb73b",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

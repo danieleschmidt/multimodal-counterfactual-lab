@@ -1,0 +1,31 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7F6158F16FC0>",
+  "original_text": "Valid text",
+  "target_attributes": [
+    "gender",
+    "age"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "male",
+        "age": "middle-aged"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7F6158DA2AE0>",
+      "generated_text": "a man middle-aged, Valid text",
+      "confidence": 0.9014058703234061,
+      "explanation": "Modified gender, age while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.002626,
+    "num_samples": 1,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:50:04.921159",
+    "image_hash": "4126a00ef17830c1",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

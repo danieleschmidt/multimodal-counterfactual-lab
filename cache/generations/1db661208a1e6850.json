@@ -1,0 +1,42 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC786802CC0>",
+  "original_text": "A doctor reviewing medical charts",
+  "target_attributes": [
+    "race",
+    "age"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "race": "white",
+        "age": "middle-aged"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC785E1FA10>",
+      "generated_text": "A middle-aged Caucasian reviewing medical charts",
+      "confidence": 0.8382958595816643,
+      "explanation": "Modified race, age while preserving context"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "race": "black",
+        "age": "young"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC785E1FF80>",
+      "generated_text": "A young African American reviewing medical charts",
+      "confidence": 0.8187957814254507,
+      "explanation": "Modified race, age while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.023478,
+    "num_samples": 2,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:52:32.691014",
+    "image_hash": "fc40059bcba721f3",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

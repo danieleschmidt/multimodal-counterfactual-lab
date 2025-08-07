@@ -1,0 +1,139 @@
+{
+  "entries": {
+    "8d70611999d6bd69": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:49:33.747196",
+      "size": 1272,
+      "path": "cache/generations/8d70611999d6bd69.json"
+    },
+    "aa9bbafa87610aaf": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:49:33.755872",
+      "size": 859,
+      "path": "cache/generations/aa9bbafa87610aaf.json"
+    },
+    "b9bee80b4e92b954": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:50:04.913695",
+      "size": 1262,
+      "path": "cache/generations/b9bee80b4e92b954.json"
+    },
+    "c2b98835c4d23fb5": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:50:04.921573",
+      "size": 858,
+      "path": "cache/generations/c2b98835c4d23fb5.json"
+    },
+    "cd6b2116837795a0": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:50:21.545201",
+      "size": 810,
+      "path": "cache/generations/cd6b2116837795a0.json"
+    },
+    "b8f95791ef093bf5": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:50:21.552303",
+      "size": 791,
+      "path": "cache/generations/b8f95791ef093bf5.json"
+    },
+    "aaf29de0eabc5192": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:50:21.558619",
+      "size": 795,
+      "path": "cache/generations/aaf29de0eabc5192.json"
+    },
+    "577979f18d80a605": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:50:21.565354",
+      "size": 791,
+      "path": "cache/generations/577979f18d80a605.json"
+    },
+    "66f466fa1e51f105": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:50:38.116694",
+      "size": 1340,
+      "path": "cache/generations/66f466fa1e51f105.json"
+    },
+    "4e9b621f767117c5": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:32.509248",
+      "size": 1743,
+      "path": "cache/generations/4e9b621f767117c5.json"
+    },
+    "bd81023a5c1b7710": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:32.594694",
+      "size": 1283,
+      "path": "cache/generations/bd81023a5c1b7710.json"
+    },
+    "1db661208a1e6850": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:32.691515",
+      "size": 1292,
+      "path": "cache/generations/1db661208a1e6850.json"
+    },
+    "73936b15b766bc17": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:32.775201",
+      "size": 851,
+      "path": "cache/generations/73936b15b766bc17.json"
+    },
+    "da57f49a7d201d16": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:32.881335",
+      "size": 2100,
+      "path": "cache/generations/da57f49a7d201d16.json"
+    },
+    "bb7ceb870409151e": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:33.506348",
+      "size": 811,
+      "path": "cache/generations/bb7ceb870409151e.json"
+    },
+    "2a29858cf27ab63d": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:33.508491",
+      "size": 811,
+      "path": "cache/generations/2a29858cf27ab63d.json"
+    },
+    "d5439da4bc3e1957": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:33.548136",
+      "size": 805,
+      "path": "cache/generations/d5439da4bc3e1957.json"
+    },
+    "160b3ca9439ce871": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:33.577957",
+      "size": 807,
+      "path": "cache/generations/160b3ca9439ce871.json"
+    },
+    "952c8b422385e18f": {
+      "cache_type": "generation",
+      "operation": "counterfactual_generation",
+      "timestamp": "2025-08-07T04:52:33.593120",
+      "size": 811,
+      "path": "cache/generations/952c8b422385e18f.json"
+    }
+  },
+  "total_size": 20092,
+  "last_cleanup": "2025-08-07T04:49:33.723112"
+}
