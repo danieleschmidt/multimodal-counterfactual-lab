@@ -11,16 +11,35 @@ import warnings
 try:
     import torch
     import torchvision.transforms as transforms
-    from PIL import Image
-    import matplotlib.pyplot as plt
-    import seaborn as sns
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
     warnings.warn("PyTorch not available. Some functionality will be limited.")
 
+try:
+    from PIL import Image
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+    # Create mock for type hints
+    Image = None
+    plt = None
+    sns = None
+    warnings.warn("PIL/Matplotlib not available. Some functionality will be limited.")
+
 from counterfactual_lab.methods.modicf import MoDiCF
 from counterfactual_lab.methods.icg import ICG
+from counterfactual_lab.data.cache import CacheManager
+from counterfactual_lab.data.storage import StorageManager
+from counterfactual_lab.exceptions import (
+    GenerationError, ModelInitializationError, ValidationError, 
+    CacheError, StorageError, DeviceError
+)
+from counterfactual_lab.validators import InputValidator, SafetyValidator
+from counterfactual_lab.optimization import PerformanceOptimizer, OptimizationConfig
+from counterfactual_lab.monitoring import SystemDiagnostics
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -29,79 +48,376 @@ logger = logging.getLogger(__name__)
 class CounterfactualGenerator:
     """Main interface for generating counterfactual image-text pairs."""
     
-    def __init__(self, method: str = "modicf", device: str = "cuda"):
+    def __init__(self, method: str = "modicf", device: str = "cuda", 
+                 use_cache: bool = True, cache_dir: str = "./cache",
+                 storage_dir: str = "./data", enable_safety_checks: bool = True,
+                 enable_optimization: bool = True, optimization_config: Optional[OptimizationConfig] = None):
         """Initialize the counterfactual generator.
         
         Args:
             method: Generation method ("modicf" or "icg")
             device: Compute device ("cuda" or "cpu")
+            use_cache: Whether to use caching
+            cache_dir: Directory for cache files
+            storage_dir: Directory for persistent storage
+            enable_safety_checks: Whether to enable ethical use validation
+            enable_optimization: Whether to enable performance optimization
+            optimization_config: Custom optimization configuration
         """
-        self.method = method
-        self.device = device if TORCH_AVAILABLE and torch.cuda.is_available() else "cpu"
-        
-        if self.device == "cuda" and not torch.cuda.is_available():
-            logger.warning("CUDA requested but not available, falling back to CPU")
-        
-        self._initialize_method()
+        try:
+            # Validate inputs
+            self.method = InputValidator.validate_method(method)
+            validated_device = InputValidator.validate_device(device)
+            
+            # Handle device availability
+            if validated_device == "auto":
+                self.device = "cuda" if TORCH_AVAILABLE and torch.cuda.is_available() else "cpu"
+            else:
+                self.device = validated_device
+                
+            # Check device availability
+            if self.device == "cuda":
+                if not TORCH_AVAILABLE:
+                    logger.warning("CUDA requested but PyTorch not available, falling back to CPU")
+                    self.device = "cpu"
+                elif not torch.cuda.is_available():
+                    logger.warning("CUDA requested but not available, falling back to CPU")
+                    self.device = "cpu"
+            
+            self.enable_safety_checks = enable_safety_checks
+            
+            # Initialize caching and storage with error handling
+            self.use_cache = use_cache
+            if use_cache:
+                try:
+                    self.cache_manager = CacheManager(cache_dir=cache_dir)
+                except Exception as e:
+                    logger.warning(f"Failed to initialize cache manager: {e}")
+                    self.cache_manager = None
+                    self.use_cache = False
+            else:
+                self.cache_manager = None
+            
+            try:
+                self.storage_manager = StorageManager(base_dir=storage_dir)
+            except Exception as e:
+                logger.error(f"Failed to initialize storage manager: {e}")
+                raise StorageError(f"Storage initialization failed: {e}")
+            
+            # Initialize generation method
+            self._initialize_method()
+            
+            # Initialize optimization
+            self.enable_optimization = enable_optimization
+            if enable_optimization:
+                try:
+                    self.optimizer = PerformanceOptimizer(self, optimization_config)
+                except Exception as e:
+                    logger.warning(f"Failed to initialize optimizer: {e}")
+                    self.optimizer = None
+                    self.enable_optimization = False
+            else:
+                self.optimizer = None
+            
+            # Initialize monitoring
+            try:
+                self.diagnostics = SystemDiagnostics()
+            except Exception as e:
+                logger.warning(f"Failed to initialize diagnostics: {e}")
+                self.diagnostics = None
+            
+        except (ValidationError, StorageError, ModelInitializationError):
+            raise
+        except Exception as e:
+            logger.error(f"Unexpected error during initialization: {e}")
+            raise ModelInitializationError(f"Generator initialization failed: {e}")
     
     def _initialize_method(self):
         """Initialize the selected generation method."""
-        if self.method == "modicf":
-            self.generator = MoDiCF(device=self.device)
-        elif self.method == "icg":
-            self.generator = ICG(device=self.device)
-        else:
-            raise ValueError(f"Unknown method: {self.method}")
+        try:
+            if self.method == "modicf":
+                self.generator = MoDiCF(device=self.device)
+            elif self.method == "icg":
+                self.generator = ICG(device=self.device)
+            else:
+                raise ValueError(f"Unknown method: {self.method}")
+            
+            logger.info(f"Initialized {self.method} generator on {self.device}")
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize {self.method} generator: {e}")
+            raise ModelInitializationError(f"Method initialization failed: {e}")
+    
+    def _generate_image_hash(self, image) -> str:
+        """Generate hash for image to enable caching."""
+        import io
+        import hashlib
         
-        logger.info(f"Initialized {self.method} generator on {self.device}")
+        buffer = io.BytesIO()
+        image.save(buffer, format='PNG')
+        hash_obj = hashlib.sha256(buffer.getvalue())
+        return hash_obj.hexdigest()[:16]
     
     def generate(
         self,
         image,
         text: str,
-        attributes: List[str],
-        num_samples: int = 5
+        attributes: Union[List[str], str],
+        num_samples: int = 5,
+        save_results: bool = False,
+        experiment_id: Optional[str] = None
     ) -> Dict:
         """Generate counterfactual examples.
         
         Args:
             image: Input image (PIL Image or path)
             text: Input text description
-            attributes: Attributes to modify ["gender", "race", "age"]
+            attributes: Attributes to modify (list or comma-separated string)
             num_samples: Number of samples to generate
+            save_results: Whether to save results to storage
+            experiment_id: Optional experiment ID for saving
             
         Returns:
             Dictionary containing generated counterfactuals
+            
+        Raises:
+            ValidationError: If inputs are invalid
+            GenerationError: If generation fails
+            StorageError: If saving fails
         """
-        if isinstance(image, (str, Path)):
-            image = Image.open(image).convert("RGB")
-        
-        logger.info(f"Generating {num_samples} counterfactuals for attributes: {attributes}")
-        
-        start_time = datetime.now()
-        
-        if self.method == "modicf":
-            results = self._generate_modicf(image, text, attributes, num_samples)
-        elif self.method == "icg":
-            results = self._generate_icg(image, text, attributes, num_samples)
-        else:
-            raise ValueError(f"Unknown method: {self.method}")
-        
-        generation_time = (datetime.now() - start_time).total_seconds()
-        
-        return {
-            "method": self.method,
-            "original_image": image,
-            "original_text": text,
-            "target_attributes": attributes,
-            "counterfactuals": results,
-            "metadata": {
-                "generation_time": generation_time,
-                "num_samples": len(results),
-                "device": self.device,
-                "timestamp": datetime.now().isoformat()
+        try:
+            # Validate all inputs
+            validated_image = InputValidator.validate_image(image)
+            validated_text = InputValidator.validate_text(text)
+            validated_attributes = InputValidator.validate_attributes(attributes)
+            validated_num_samples = InputValidator.validate_num_samples(num_samples)
+            
+            # Safety checks if enabled
+            if self.enable_safety_checks:
+                is_ethical, ethical_warnings = SafetyValidator.validate_ethical_use(
+                    validated_text, validated_attributes
+                )
+                
+                if not is_ethical:
+                    logger.warning("Ethical concerns detected:")
+                    for warning in ethical_warnings:
+                        logger.warning(f"  - {warning}")
+                
+                is_private_safe, privacy_warnings = SafetyValidator.validate_data_privacy(
+                    image if isinstance(image, (str, Path)) else None
+                )
+                
+                if not is_private_safe:
+                    logger.warning("Privacy concerns detected:")
+                    for warning in privacy_warnings:
+                        logger.warning(f"  - {warning}")
+            
+            # Generate image hash for caching
+            image_hash = self._generate_image_hash(validated_image)
+            
+            # Check cache first
+            if self.cache_manager and self.use_cache:
+                try:
+                    cached_result = self.cache_manager.get_cached_generation(
+                        method=self.method,
+                        image_hash=image_hash,
+                        text=validated_text,
+                        attributes={attr: "varied" for attr in validated_attributes}
+                    )
+                    
+                    if cached_result:
+                        logger.info("Using cached generation result")
+                        return cached_result
+                        
+                except Exception as e:
+                    logger.warning(f"Cache retrieval failed: {e}")
+            
+            logger.info(f"Generating {validated_num_samples} counterfactuals for attributes: {validated_attributes}")
+            
+            start_time = datetime.now()
+            
+            try:
+                if self.method == "modicf":
+                    results = self._generate_modicf(validated_image, validated_text, validated_attributes, validated_num_samples)
+                elif self.method == "icg":
+                    results = self._generate_icg(validated_image, validated_text, validated_attributes, validated_num_samples)
+                else:
+                    raise GenerationError(f"Unknown method: {self.method}")
+                
+                if not results:
+                    raise GenerationError("Generation produced no results")
+                    
+            except Exception as e:
+                logger.error(f"Generation failed: {e}")
+                raise GenerationError(f"Failed to generate counterfactuals: {e}")
+            
+            generation_time = (datetime.now() - start_time).total_seconds()
+            
+            final_result = {
+                "method": self.method,
+                "original_image": validated_image,
+                "original_text": validated_text,
+                "target_attributes": validated_attributes,
+                "counterfactuals": results,
+                "metadata": {
+                    "generation_time": generation_time,
+                    "num_samples": len(results),
+                    "device": self.device,
+                    "timestamp": datetime.now().isoformat(),
+                    "image_hash": image_hash,
+                    "validation_passed": True,
+                    "safety_checks_enabled": self.enable_safety_checks
+                }
             }
+            
+            # Cache the result
+            if self.cache_manager and self.use_cache:
+                try:
+                    self.cache_manager.cache_generation_result(
+                        method=self.method,
+                        image_hash=image_hash,
+                        text=validated_text,
+                        attributes={attr: "varied" for attr in validated_attributes},
+                        result=final_result
+                    )
+                except Exception as e:
+                    logger.warning(f"Failed to cache result: {e}")
+            
+            # Save to persistent storage if requested
+            if save_results:
+                try:
+                    saved_info = self.storage_manager.save_counterfactual_result(
+                        final_result, experiment_id
+                    )
+                    final_result["metadata"]["saved_experiment_id"] = saved_info["experiment_id"]
+                    logger.info(f"Results saved with experiment ID: {saved_info['experiment_id']}")
+                except Exception as e:
+                    logger.error(f"Failed to save results: {e}")
+                    raise StorageError(f"Storage operation failed: {e}")
+            
+            return final_result
+            
+        except (ValidationError, GenerationError, StorageError):
+            raise
+        except Exception as e:
+            logger.error(f"Unexpected error during generation: {e}")
+            raise GenerationError(f"Counterfactual generation failed: {e}")
+    
+    def generate_batch(self, requests: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Generate counterfactuals for multiple requests efficiently.
+        
+        Args:
+            requests: List of generation requests, each containing image, text, attributes, etc.
+            
+        Returns:
+            List of generation results
+            
+        Raises:
+            ValidationError: If any request is invalid
+            GenerationError: If batch generation fails
+        """
+        if not requests:
+            return []
+        
+        logger.info(f"Processing batch of {len(requests)} generation requests")
+        
+        try:
+            # Use optimizer for batch processing if available
+            if self.optimizer and self.enable_optimization:
+                return self.optimizer.optimize_batch_requests(requests)
+            else:
+                # Fallback to sequential processing
+                results = []
+                for i, request in enumerate(requests):
+                    logger.info(f"Processing request {i+1}/{len(requests)}")
+                    result = self.generate(**request)
+                    results.append(result)
+                return results
+                
+        except Exception as e:
+            logger.error(f"Batch generation failed: {e}")
+            raise GenerationError(f"Batch generation failed: {e}")
+    
+    def get_system_status(self) -> Dict[str, Any]:
+        """Get comprehensive system status and performance metrics."""
+        status = {
+            "generator": {
+                "method": self.method,
+                "device": self.device,
+                "cache_enabled": self.use_cache,
+                "optimization_enabled": self.enable_optimization,
+                "safety_checks_enabled": self.enable_safety_checks
+            },
+            "timestamp": datetime.now().isoformat()
         }
+        
+        # Add cache statistics
+        if self.cache_manager:
+            try:
+                status["cache"] = self.cache_manager.get_cache_stats()
+            except Exception as e:
+                status["cache"] = {"error": str(e)}
+        
+        # Add storage statistics
+        try:
+            status["storage"] = self.storage_manager.get_storage_stats()
+        except Exception as e:
+            status["storage"] = {"error": str(e)}
+        
+        # Add optimization statistics
+        if self.optimizer:
+            try:
+                status["optimization"] = self.optimizer.get_optimization_stats()
+            except Exception as e:
+                status["optimization"] = {"error": str(e)}
+        
+        # Add system diagnostics
+        if self.diagnostics:
+            try:
+                status["diagnostics"] = self.diagnostics.run_full_diagnostics()
+            except Exception as e:
+                status["diagnostics"] = {"error": str(e)}
+        
+        return status
+    
+    def optimize_performance(self, **config_updates):
+        """Update optimization configuration for better performance."""
+        if not self.optimizer:
+            logger.warning("Optimization not enabled")
+            return
+        
+        try:
+            self.optimizer.update_config(**config_updates)
+            logger.info(f"Updated optimization config: {config_updates}")
+        except Exception as e:
+            logger.error(f"Failed to update optimization config: {e}")
+    
+    def cleanup_resources(self):
+        """Clean up resources and optimize memory usage."""
+        logger.info("Cleaning up resources...")
+        
+        # Clear caches
+        if self.cache_manager:
+            try:
+                self.cache_manager.cleanup_expired()
+            except Exception as e:
+                logger.warning(f"Cache cleanup failed: {e}")
+        
+        # Optimize memory
+        if self.optimizer and hasattr(self.optimizer, 'memory_manager'):
+            try:
+                self.optimizer.memory_manager.optimize_memory_usage()
+            except Exception as e:
+                logger.warning(f"Memory optimization failed: {e}")
+        
+        # Clear image preprocessing cache
+        if self.optimizer and hasattr(self.optimizer, 'batch_processor'):
+            try:
+                self.optimizer.batch_processor.image_processor.clear_cache()
+            except Exception as e:
+                logger.warning(f"Image cache cleanup failed: {e}")
+        
+        logger.info("Resource cleanup completed")
     
     def _generate_modicf(self, image, text: str, attributes: List[str], num_samples: int) -> List[Dict]:
         """Generate counterfactuals using MoDiCF method."""

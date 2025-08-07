@@ -1,0 +1,20 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7F98BF3E9FD0>",
+  "original_text": "A person in an office",
+  "target_attributes": [
+    "gender",
+    "race",
+    "age"
+  ],
+  "metadata": {
+    "generation_time": 0.032607,
+    "num_samples": 2,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:50:38.116148",
+    "image_hash": "7f628aa1542f2169",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  },
+  "num_counterfactuals": 2
+}

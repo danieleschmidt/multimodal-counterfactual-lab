@@ -1,0 +1,42 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC7866278F0>",
+  "original_text": "A teacher explaining a concept",
+  "target_attributes": [
+    "age",
+    "gender"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "age": "middle-aged",
+        "gender": "non-binary"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC7878BF4D0>",
+      "generated_text": "A a person middle-aged explaining a concept",
+      "confidence": 0.8484764295321031,
+      "explanation": "Modified age, gender while preserving context"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "age": "young",
+        "gender": "male"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC787F905C0>",
+      "generated_text": "A a man young explaining a concept",
+      "confidence": 0.9011054984965806,
+      "explanation": "Modified age, gender while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.024941,
+    "num_samples": 2,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:52:32.594053",
+    "image_hash": "fc40059bcba721f3",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

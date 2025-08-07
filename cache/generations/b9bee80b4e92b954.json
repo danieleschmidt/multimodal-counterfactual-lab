@@ -1,0 +1,42 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7F6158D53F50>",
+  "original_text": "A person standing in a room",
+  "target_attributes": [
+    "gender",
+    "age"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "male",
+        "age": "young"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7F6158DA17F0>",
+      "generated_text": "A a man young standing in a room",
+      "confidence": 0.8174458650420008,
+      "explanation": "Modified gender, age while preserving context"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "gender": "female",
+        "age": "elderly"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7F6159675EE0>",
+      "generated_text": "A a woman elderly standing in a room",
+      "confidence": 0.871140226071299,
+      "explanation": "Modified gender, age while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.008269,
+    "num_samples": 2,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:50:04.913199",
+    "image_hash": "4cd974e16b2d8dec",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

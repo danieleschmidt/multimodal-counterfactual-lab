@@ -1,0 +1,64 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC78EFF6CF0>",
+  "original_text": "A person presenting to colleagues",
+  "target_attributes": [
+    "gender",
+    "race"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "male",
+        "race": "white"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC786671130>",
+      "generated_text": "A a man Caucasian presenting to colleagues",
+      "confidence": 0.8996027377934972,
+      "explanation": "Modified gender, race while preserving context"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "gender": "non-binary",
+        "race": "black"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC7866712B0>",
+      "generated_text": "A a person African American presenting to colleagues",
+      "confidence": 0.8725945248714612,
+      "explanation": "Modified gender, race while preserving context"
+    },
+    {
+      "sample_id": 2,
+      "target_attributes": {
+        "gender": "male",
+        "race": "black"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC7866711C0>",
+      "generated_text": "A a man African American presenting to colleagues",
+      "confidence": 0.8799970682066742,
+      "explanation": "Modified gender, race while preserving context"
+    },
+    {
+      "sample_id": 3,
+      "target_attributes": {
+        "gender": "male",
+        "race": "hispanic"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC786670F50>",
+      "generated_text": "A a man Hispanic presenting to colleagues",
+      "confidence": 0.7960432196583723,
+      "explanation": "Modified gender, race while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.05009,
+    "num_samples": 4,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:52:32.880747",
+    "image_hash": "fc40059bcba721f3",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

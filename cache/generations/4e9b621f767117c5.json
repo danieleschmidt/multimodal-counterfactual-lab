@@ -1,0 +1,53 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC7877BCE00>",
+  "original_text": "A professional working at their computer",
+  "target_attributes": [
+    "gender",
+    "age"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "female",
+        "age": "elderly"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC787F93BF0>",
+      "generated_text": "a woman elderly, A professional working at their computer",
+      "confidence": 0.9064724906856297,
+      "explanation": "Modified gender, age while preserving context"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "gender": "non-binary",
+        "age": "young"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC785E1FFB0>",
+      "generated_text": "a person young, A professional working at their computer",
+      "confidence": 0.8575347307108464,
+      "explanation": "Modified gender, age while preserving context"
+    },
+    {
+      "sample_id": 2,
+      "target_attributes": {
+        "gender": "non-binary",
+        "age": "elderly"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FC7878BFBF0>",
+      "generated_text": "a person elderly, A professional working at their computer",
+      "confidence": 0.8783531344201528,
+      "explanation": "Modified gender, age while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.04532,
+    "num_samples": 3,
+    "device": "cpu",
+    "timestamp": "2025-08-07T04:52:32.508630",
+    "image_hash": "fc40059bcba721f3",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

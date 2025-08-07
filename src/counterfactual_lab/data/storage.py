@@ -148,11 +148,17 @@ class StorageManager:
             
             # Save original image if present
             if "original_image" in result and isinstance(result["original_image"], Image.Image):
-                original_info = self.save_image(
-                    result["original_image"], 
-                    "original.png", 
-                    str(exp_dir.relative_to(self.images_dir))
-                )
+                # Save directly in experiment directory 
+                original_path = exp_dir / "original.png"
+                result["original_image"].save(original_path, format='PNG', optimize=True)
+                
+                original_info = {
+                    "filename": "original.png",
+                    "path": str(original_path),
+                    "relative_path": str(original_path.relative_to(self.base_dir)),
+                    "size_bytes": original_path.stat().st_size,
+                    "timestamp": datetime.now().isoformat(),
+                }
                 saved_files["original_image"] = original_info
             
             # Save counterfactual images
@@ -160,11 +166,17 @@ class StorageManager:
                 cf_images = []
                 for i, cf in enumerate(result["counterfactuals"]):
                     if "generated_image" in cf and isinstance(cf["generated_image"], Image.Image):
-                        cf_info = self.save_image(
-                            cf["generated_image"],
-                            f"counterfactual_{i}.png",
-                            str(exp_dir.relative_to(self.images_dir))
-                        )
+                        # Save directly in experiment directory
+                        cf_path = exp_dir / f"counterfactual_{i}.png"
+                        cf["generated_image"].save(cf_path, format='PNG', optimize=True)
+                        
+                        cf_info = {
+                            "filename": f"counterfactual_{i}.png",
+                            "path": str(cf_path),
+                            "relative_path": str(cf_path.relative_to(self.base_dir)),
+                            "size_bytes": cf_path.stat().st_size,
+                            "timestamp": datetime.now().isoformat(),
+                        }
                         cf_images.append(cf_info)
                 
                 saved_files["counterfactual_images"] = cf_images
