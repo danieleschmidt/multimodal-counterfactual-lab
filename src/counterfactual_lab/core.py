@@ -909,7 +909,7 @@ class BiasEvaluator:
                 if not metric_data.get("passes_threshold", False):
                     findings.append(f"Equalized odds threshold not met (TPR difference: {metric_data['tpr_difference']:.3f})")
         
-        if results["summary"]["fairness_score"] < 0.7:
+        if results["summary"]["overall_fairness_score"] < 0.7:
             findings.append("Overall fairness score below acceptable threshold")
         
         return findings or ["No significant bias detected in evaluated metrics"]
@@ -918,7 +918,7 @@ class BiasEvaluator:
         """Generate recommendations based on results."""
         recommendations = []
         
-        if results["summary"]["fairness_score"] < 0.7:
+        if results["summary"]["overall_fairness_score"] < 0.7:
             recommendations.append("Implement bias mitigation strategies in model training")
             recommendations.append("Increase diversity in training data")
             recommendations.append("Regular bias monitoring and evaluation")
@@ -1004,7 +1004,7 @@ class BiasEvaluator:
         """Get immediate technical actions."""
         actions = []
         
-        if results["summary"]["fairness_score"] < 0.7:
+        if results["summary"]["overall_fairness_score"] < 0.7:
             actions.extend([
                 "Review model architecture for bias sources",
                 "Analyze training data distribution",

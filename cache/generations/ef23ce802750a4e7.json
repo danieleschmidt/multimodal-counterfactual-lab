@@ -1,0 +1,53 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EAF4CB0>",
+  "original_text": "A healthcare worker",
+  "target_attributes": [
+    "gender",
+    "age"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "non-binary",
+        "age": "middle-aged"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EAF7230>",
+      "generated_text": "a person middle-aged, A healthcare worker",
+      "confidence": 0.8546092964485084,
+      "explanation": "Modified gender, age while preserving context"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "gender": "non-binary",
+        "age": "young"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EAF73E0>",
+      "generated_text": "a person young, A healthcare worker",
+      "confidence": 0.8400193863607275,
+      "explanation": "Modified gender, age while preserving context"
+    },
+    {
+      "sample_id": 2,
+      "target_attributes": {
+        "gender": "non-binary",
+        "age": "young"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EAF74A0>",
+      "generated_text": "a person young, A healthcare worker",
+      "confidence": 0.7925840760457409,
+      "explanation": "Modified gender, age while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.038463,
+    "num_samples": 3,
+    "device": "cpu",
+    "timestamp": "2025-08-09T02:02:36.257604",
+    "image_hash": "f849a48c7fed8b5a",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

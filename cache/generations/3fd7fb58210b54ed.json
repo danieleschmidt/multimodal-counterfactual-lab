@@ -1,0 +1,39 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EB7C0B0>",
+  "original_text": "A scientist in a laboratory",
+  "target_attributes": [
+    "gender"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "female"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EB7C260>",
+      "generated_text": "a woman, A scientist in a laboratory",
+      "confidence": 0.8485481609633374,
+      "explanation": "Modified gender while preserving context"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "gender": "female"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EB7C2C0>",
+      "generated_text": "a woman, A scientist in a laboratory",
+      "confidence": 0.9029657541822165,
+      "explanation": "Modified gender while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.023508,
+    "num_samples": 2,
+    "device": "cpu",
+    "timestamp": "2025-08-09T02:02:36.296408",
+    "image_hash": "fd63dd643030afd0",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}
