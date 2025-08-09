@@ -1,0 +1,268 @@
+# Production Kubernetes deployment for Counterfactual Lab
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: counterfactual-lab
+  labels:
+    name: counterfactual-lab
+    environment: production
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: counterfactual-config
+  namespace: counterfactual-lab
+data:
+  COUNTERFACTUAL_LAB_ENV: "production"
+  LOG_LEVEL: "INFO"
+  CACHE_SIZE_MB: "2048"
+  MAX_CONCURRENT_REQUESTS: "20"
+  ENABLE_SECURITY: "true"
+  ENABLE_ASYNC: "true"
+  ENABLE_MONITORING: "true"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: counterfactual-secrets
+  namespace: counterfactual-lab
+type: Opaque
+stringData:
+  API_KEY: "your-secure-api-key"
+  DATABASE_URL: "postgresql://user:password@db:5432/counterfactual"
+  REDIS_URL: "redis://redis:6379/0"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counterfactual-lab-app
+  namespace: counterfactual-lab
+  labels:
+    app: counterfactual-lab
+    tier: application
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: counterfactual-lab
+  template:
+    metadata:
+      labels:
+        app: counterfactual-lab
+        tier: application
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: counterfactual-service-account
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        fsGroup: 10001
+      containers:
+      - name: counterfactual-lab
+        image: terragon/counterfactual-lab:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        - containerPort: 8080
+          name: metrics
+          protocol: TCP
+        env:
+        - name: PORT
+          value: "8000"
+        envFrom:
+        - configMapRef:
+            name: counterfactual-config
+        - secretRef:
+            name: counterfactual-secrets
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data
+        - name: cache-volume
+          mountPath: /app/cache
+        - name: logs-volume
+          mountPath: /app/logs
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: counterfactual-data-pvc
+      - name: cache-volume
+        emptyDir:
+          sizeLimit: 2Gi
+      - name: logs-volume
+        emptyDir:
+          sizeLimit: 1Gi
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: counterfactual-lab-service
+  namespace: counterfactual-lab
+  labels:
+    app: counterfactual-lab
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  - port: 8080
+    targetPort: metrics
+    protocol: TCP
+    name: metrics
+  selector:
+    app: counterfactual-lab
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: counterfactual-lab-ingress
+  namespace: counterfactual-lab
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rate-limit-connections: "20"
+    nginx.ingress.kubernetes.io/rate-limit-requests-per-second: "10"
+spec:
+  tls:
+  - hosts:
+    - counterfactual-lab.yourdomain.com
+    secretName: counterfactual-lab-tls
+  rules:
+  - host: counterfactual-lab.yourdomain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: counterfactual-lab-service
+            port:
+              number: 80
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: counterfactual-data-pvc
+  namespace: counterfactual-lab
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: counterfactual-service-account
+  namespace: counterfactual-lab
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: counterfactual-lab
+  name: counterfactual-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: counterfactual-rolebinding
+  namespace: counterfactual-lab
+subjects:
+- kind: ServiceAccount
+  name: counterfactual-service-account
+  namespace: counterfactual-lab
+roleRef:
+  kind: Role
+  name: counterfactual-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: counterfactual-lab-pdb
+  namespace: counterfactual-lab
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: counterfactual-lab
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: counterfactual-lab-hpa
+  namespace: counterfactual-lab
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: counterfactual-lab-app
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80

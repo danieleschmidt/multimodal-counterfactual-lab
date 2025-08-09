@@ -1,0 +1,39 @@
+{
+  "method": "icg",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EAF6F00>",
+  "original_text": "A scientist in a laboratory",
+  "target_attributes": [
+    "gender"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "male"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EAF7CE0>",
+      "generated_text": "A scientist in a laboratory",
+      "explanation": "Changed gender to male",
+      "reasoning": "Applied interpretable changes to gender"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "gender": "male"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EAF6180>",
+      "generated_text": "A scientist in a laboratory",
+      "explanation": "Changed gender to male",
+      "reasoning": "Applied interpretable changes to gender"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.000568,
+    "num_samples": 2,
+    "device": "cpu",
+    "timestamp": "2025-08-09T02:02:36.310526",
+    "image_hash": "fd63dd643030afd0",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

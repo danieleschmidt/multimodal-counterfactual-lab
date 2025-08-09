@@ -1,0 +1,29 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7FF71ECE3860>",
+  "original_text": "A person working",
+  "target_attributes": [
+    "gender"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "female"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=128x128 at 0x7FF71ECE3B30>",
+      "generated_text": "A a woman working",
+      "confidence": 0.863769629211156,
+      "explanation": "Modified gender while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.002649,
+    "num_samples": 1,
+    "device": "cpu",
+    "timestamp": "2025-08-09T02:02:35.146703",
+    "image_hash": "119b06c9571ebd16",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

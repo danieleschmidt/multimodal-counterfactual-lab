@@ -1,0 +1,42 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FCF876BB2C0>",
+  "original_text": "A person in a photo",
+  "target_attributes": [
+    "gender",
+    "age"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "male",
+        "age": "middle-aged"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FCF87702CC0>",
+      "generated_text": "A a man middle-aged in a photo",
+      "confidence": 0.863169786732088,
+      "explanation": "Modified gender, age while preserving context"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "gender": "male",
+        "age": "elderly"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FCF87702E70>",
+      "generated_text": "A a man elderly in a photo",
+      "confidence": 0.8644272445845322,
+      "explanation": "Modified gender, age while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.031936,
+    "num_samples": 2,
+    "device": "cpu",
+    "timestamp": "2025-08-09T01:51:04.523220",
+    "image_hash": "6296862ea5a76fd8",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

@@ -49,3 +49,8 @@ class DeviceError(CounterfactualLabError):
 class ConfigurationError(CounterfactualLabError):
     """Raised when configuration is invalid."""
     pass
+
+
+class SecurityError(CounterfactualLabError):
+    """Raised when security validation fails."""
+    pass

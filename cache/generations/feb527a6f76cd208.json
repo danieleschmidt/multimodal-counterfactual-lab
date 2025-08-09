@@ -1,0 +1,29 @@
+{
+  "method": "icg",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EAF4410>",
+  "original_text": "A person working in an office",
+  "target_attributes": [
+    "gender"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "male"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FF71EAF46B0>",
+      "generated_text": "A person working in an office",
+      "explanation": "Changed gender to male",
+      "reasoning": "Applied interpretable changes to gender"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.000646,
+    "num_samples": 1,
+    "device": "cpu",
+    "timestamp": "2025-08-09T02:02:35.135363",
+    "image_hash": "8804059f833d72f2",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "method": "icg",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7EFCEA8E76B0>",
+  "original_text": "A doctor examining a patient",
+  "target_attributes": [
+    "gender"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "male"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7EFCEA94CFB0>",
+      "generated_text": "A doctor examining a patient",
+      "explanation": "Changed gender to male",
+      "reasoning": "Applied interpretable changes to gender"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.000656,
+    "num_samples": 1,
+    "device": "cpu",
+    "timestamp": "2025-08-09T01:51:21.231365",
+    "image_hash": "25339c142c1c8d9a",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "method": "modicf",
+  "original_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FE9FDD2A810>",
+  "original_text": "A professional person in business attire",
+  "target_attributes": [
+    "gender",
+    "age"
+  ],
+  "counterfactuals": [
+    {
+      "sample_id": 0,
+      "target_attributes": {
+        "gender": "non-binary",
+        "age": "middle-aged"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FE9FCCA7920>",
+      "generated_text": "A professional a person middle-aged in business attire",
+      "confidence": 0.850237717507742,
+      "explanation": "Modified gender, age while preserving context"
+    },
+    {
+      "sample_id": 1,
+      "target_attributes": {
+        "gender": "female",
+        "age": "middle-aged"
+      },
+      "generated_image": "<PIL.Image.Image image mode=RGB size=256x256 at 0x7FE9FCCA7860>",
+      "generated_text": "A professional a woman middle-aged in business attire",
+      "confidence": 0.8714540727580262,
+      "explanation": "Modified gender, age while preserving context"
+    }
+  ],
+  "metadata": {
+    "generation_time": 0.023588,
+    "num_samples": 2,
+    "device": "cpu",
+    "timestamp": "2025-08-09T02:00:43.203607",
+    "image_hash": "70b9ca010830295d",
+    "validation_passed": true,
+    "safety_checks_enabled": true
+  }
+}
