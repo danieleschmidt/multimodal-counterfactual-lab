@@ -14,7 +14,7 @@ diffusers==0.27.2
     # via multimodal-counterfactual-lab (pyproject.toml)
 fairlearn==0.10.0
     # via multimodal-counterfactual-lab (pyproject.toml)
-kornia==0.7.2
+kornia==0.8.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 matplotlib==3.10.5
     # via multimodal-counterfactual-lab (pyproject.toml)
