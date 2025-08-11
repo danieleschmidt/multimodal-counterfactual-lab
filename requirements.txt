@@ -2,7 +2,7 @@
 # Generated from pyproject.toml
 # This file is used for reproducible builds
 
-accelerate==0.30.1
+accelerate==1.10.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 aif360==0.6.1
     # via multimodal-counterfactual-lab (pyproject.toml)
