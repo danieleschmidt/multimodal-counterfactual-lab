@@ -38,7 +38,7 @@ streamlit==1.35.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 torch==2.3.0
     # via multimodal-counterfactual-lab (pyproject.toml)
-tqdm==4.66.4
+tqdm==4.67.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 transformers==4.41.2
     # via multimodal-counterfactual-lab (pyproject.toml)
