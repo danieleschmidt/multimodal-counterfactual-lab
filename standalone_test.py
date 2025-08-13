@@ -29,7 +29,11 @@ def test_autonomous_sdlc():
     try:
         # Direct import and test
         sys.path.insert(0, 'src')
-        from counterfactual_lab.minimal_core import test_minimal_system
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("minimal_core", "src/counterfactual_lab/minimal_core.py")
+        minimal_core = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(minimal_core)
+        test_minimal_system = minimal_core.test_minimal_system
         
         gen1_start = time.time()
         gen1_result = test_minimal_system()
@@ -59,7 +63,11 @@ def test_autonomous_sdlc():
     logger.info("\n🛡️ Generation 2: MAKE IT ROBUST (Reliable)")
     logger.info("-" * 40)
     try:
-        from counterfactual_lab.robust_core import test_robust_system
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("robust_core", "src/counterfactual_lab/robust_core.py")
+        robust_core = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(robust_core)
+        test_robust_system = robust_core.test_robust_system
         
         gen2_start = time.time()
         gen2_result = test_robust_system()
@@ -91,7 +99,11 @@ def test_autonomous_sdlc():
     logger.info("\n⚡ Generation 3: MAKE IT SCALE (Optimized)")
     logger.info("-" * 40)
     try:
-        from counterfactual_lab.scalable_core import test_scalable_system
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("scalable_core", "src/counterfactual_lab/scalable_core.py")
+        scalable_core = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(scalable_core)
+        test_scalable_system = scalable_core.test_scalable_system
         
         gen3_start = time.time()
         gen3_result = test_scalable_system()
@@ -152,7 +164,7 @@ def test_autonomous_sdlc():
         logger.info(f"\n{result['status']} {gen_num}")
         if "time" in result:
             logger.info(f"   Execution Time: {result['time']:.2f}s")
-        logger.info(f"   Description: {result['description']}")
+        logger.info(f"   Description: {result.get('description', 'No description')}")
         if "features" in result:
             logger.info(f"   Features Implemented:")
             for feature in result["features"]:
