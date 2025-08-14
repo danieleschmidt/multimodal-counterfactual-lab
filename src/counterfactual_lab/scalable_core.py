@@ -8,6 +8,8 @@ import traceback
 import time
 import asyncio
 import threading
+import multiprocessing
+import math
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Union, Any, Callable
 from pathlib import Path
@@ -612,6 +614,9 @@ class ScalableCounterfactualGenerator:
         if isinstance(image, (str, Path)):
             return MockImage(400, 300)  # Mock loading
         elif hasattr(image, 'width') and hasattr(image, 'height'):
+            # Convert to scalable MockImage if needed
+            if not hasattr(image, 'get_hash'):
+                return MockImage(image.width, image.height, getattr(image, 'mode', 'RGB'))
             return image
         else:
             raise ValueError("Invalid image input")
@@ -966,6 +971,406 @@ class ScalableCounterfactualGenerator:
             self.cache.clear()
         
         logger.info("Scalable generator shutdown completed")
+
+
+class ScalableBiasEvaluator:
+    """Scalable bias evaluator with parallel processing and caching."""
+    
+    def __init__(self, model=None, max_workers: int = None, **kwargs):
+        """Initialize scalable bias evaluator."""
+        self.model = model
+        self.max_workers = max_workers or min(4, multiprocessing.cpu_count())
+        self.cache = IntelligentCache(max_size=500)
+        self.stats = {
+            'total_evaluations': 0,
+            'cache_hits': 0,
+            'parallel_evaluations': 0,
+            'start_time': time.time()
+        }
+        
+        logger.info(f"Scalable bias evaluator initialized with {self.max_workers} workers")
+    
+    def evaluate(self, counterfactuals: Dict[str, Any], metrics: List[str], 
+                user_id: str = None, use_cache: bool = True, **kwargs) -> Dict[str, Any]:
+        """Evaluate bias with parallel processing and caching."""
+        start_time = time.time()
+        
+        # Check cache first
+        if use_cache:
+            cache_key = self._generate_cache_key(counterfactuals, metrics)
+            cached_result = self.cache.get(
+                method="bias_evaluation", 
+                image_hash=cache_key, 
+                text=str(metrics), 
+                attributes={"evaluation": "bias"}
+            )
+            
+            if cached_result:
+                self.stats['cache_hits'] += 1
+                logger.info(f"Cache hit for bias evaluation: {cache_key}")
+                return cached_result
+        
+        # Parallel evaluation of metrics
+        results = {}
+        
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            future_to_metric = {
+                executor.submit(self._evaluate_metric, counterfactuals, metric): metric
+                for metric in metrics
+            }
+            
+            for future in as_completed(future_to_metric):
+                metric = future_to_metric[future]
+                try:
+                    results[metric] = future.result()
+                except Exception as e:
+                    logger.error(f"Metric evaluation failed for {metric}: {e}")
+                    results[metric] = {'error': str(e)}
+        
+        # Compile final evaluation result
+        evaluation_result = {
+            'metrics': results,
+            'summary': self._compile_summary(results),
+            'metadata': {
+                'evaluation_time': time.time() - start_time,
+                'parallel_processing': True,
+                'user_id': user_id,
+                'num_metrics': len(metrics),
+                'evaluator_version': 'scalable_v1.0'
+            },
+            'validation_passed': self._validate_results(results)
+        }
+        
+        # Cache the result
+        if use_cache:
+            self.cache.set(
+                method="bias_evaluation",
+                image_hash=cache_key,
+                text=str(metrics),
+                attributes={"evaluation": "bias"},
+                value=evaluation_result,
+                ttl=1800  # 30 minutes TTL
+            )
+        
+        # Update statistics
+        self.stats['total_evaluations'] += 1
+        self.stats['parallel_evaluations'] += 1
+        
+        logger.info(f"Bias evaluation completed for user {user_id} in {time.time() - start_time:.3f}s")
+        return evaluation_result
+    
+    def _generate_cache_key(self, counterfactuals: Dict[str, Any], metrics: List[str]) -> str:
+        """Generate cache key for evaluation."""
+        cf_data = counterfactuals.get('counterfactuals', [])
+        key_components = [
+            str(len(cf_data)),
+            str(sorted(metrics)),
+            counterfactuals.get('method', 'unknown')
+        ]
+        
+        # Add sample of counterfactual attributes for uniqueness
+        if cf_data:
+            sample_attrs = []
+            for cf in cf_data[:3]:  # Use first 3 for key
+                attrs = cf.get('target_attributes', {})
+                sample_attrs.append(str(sorted(attrs.items())))
+            key_components.extend(sample_attrs)
+        
+        key_string = '_'.join(key_components)
+        return hashlib.sha256(key_string.encode()).hexdigest()[:16]
+    
+    def _evaluate_metric(self, counterfactuals: Dict[str, Any], metric: str) -> Dict[str, Any]:
+        """Evaluate a single metric with optimization."""
+        cf_list = counterfactuals.get('counterfactuals', [])
+        
+        if not cf_list:
+            return {'error': 'No counterfactuals provided'}
+        
+        try:
+            if metric == "demographic_parity":
+                return self._evaluate_demographic_parity(cf_list)
+            elif metric == "fairness_score":
+                return self._evaluate_fairness_score(cf_list)
+            elif metric == "cits_score":
+                return self._evaluate_cits_score(cf_list)
+            elif metric == "attribute_balance":
+                return self._evaluate_attribute_balance(cf_list)
+            else:
+                return {'error': f'Unknown metric: {metric}'}
+                
+        except Exception as e:
+            logger.error(f"Metric evaluation error for {metric}: {e}")
+            return {'error': f'Evaluation failed: {str(e)}'}
+    
+    def _evaluate_demographic_parity(self, counterfactuals: List[Dict]) -> Dict[str, Any]:
+        """Evaluate demographic parity with optimized computation."""
+        from collections import defaultdict
+        
+        attr_counts = defaultdict(lambda: defaultdict(int))
+        total_samples = len(counterfactuals)
+        
+        # Count attribute distributions
+        for cf in counterfactuals:
+            target_attrs = cf.get('target_attributes', {})
+            for attr, value in target_attrs.items():
+                attr_counts[attr][value] += 1
+        
+        # Calculate parity scores
+        parity_scores = {}
+        for attr, value_counts in attr_counts.items():
+            if not value_counts:
+                continue
+                
+            total_attr = sum(value_counts.values())
+            proportions = [count / total_attr for count in value_counts.values()]
+            
+            # Parity score: 1.0 = perfect balance, 0.0 = maximum imbalance
+            max_prop = max(proportions)
+            min_prop = min(proportions)
+            parity_score = 1.0 - (max_prop - min_prop)
+            
+            parity_scores[attr] = {
+                'parity_score': parity_score,
+                'distribution': dict(value_counts),
+                'proportions': dict(zip(value_counts.keys(), proportions))
+            }
+        
+        overall_score = sum(data['parity_score'] for data in parity_scores.values()) / len(parity_scores) if parity_scores else 0.0
+        
+        return {
+            'overall_balance_score': overall_score,
+            'attribute_parity': parity_scores,
+            'passes_threshold': overall_score >= 0.7,
+            'total_samples': total_samples,
+            'metric_type': 'demographic_parity'
+        }
+    
+    def _evaluate_fairness_score(self, counterfactuals: List[Dict]) -> Dict[str, Any]:
+        """Evaluate overall fairness score."""
+        if not counterfactuals:
+            return {'error': 'No counterfactuals provided'}
+        
+        # Analyze confidence distribution
+        confidences = [cf.get('confidence', 0.5) for cf in counterfactuals]
+        avg_confidence = sum(confidences) / len(confidences)
+        
+        # Calculate variance
+        variance = sum((c - avg_confidence) ** 2 for c in confidences) / len(confidences)
+        std_dev = variance ** 0.5
+        
+        # Fairness score combines average confidence with consistency
+        consistency_score = max(0, 1 - (std_dev / 0.5))  # Normalize by max reasonable std_dev
+        fairness_score = (avg_confidence + consistency_score) / 2
+        
+        return {
+            'fairness_score': fairness_score,
+            'confidence_stats': {
+                'mean': avg_confidence,
+                'std_dev': std_dev,
+                'min': min(confidences),
+                'max': max(confidences)
+            },
+            'consistency_score': consistency_score,
+            'passes_threshold': fairness_score >= 0.6,
+            'metric_type': 'fairness_score'
+        }
+    
+    def _evaluate_cits_score(self, counterfactuals: List[Dict]) -> Dict[str, Any]:
+        """Evaluate CITS (Counterfactual Image-Text Similarity) score."""
+        # Mock CITS evaluation with realistic computation
+        num_samples = len(counterfactuals)
+        
+        # Diversity score based on attribute variety
+        all_attrs = set()
+        for cf in counterfactuals:
+            attrs = cf.get('target_attributes', {})
+            for attr, value in attrs.items():
+                all_attrs.add(f"{attr}:{value}")
+        
+        diversity_factor = min(1.0, len(all_attrs) / (num_samples * 2))  # Expect ~2 attrs per sample
+        
+        # Quality score based on confidence
+        confidences = [cf.get('confidence', 0.5) for cf in counterfactuals]
+        quality_factor = sum(confidences) / len(confidences)
+        
+        # CITS combines diversity and quality
+        cits_score = (diversity_factor * 0.6 + quality_factor * 0.4)
+        
+        return {
+            'cits_score': cits_score,
+            'diversity_component': diversity_factor,
+            'quality_component': quality_factor,
+            'unique_attributes': len(all_attrs),
+            'passes_threshold': cits_score >= 0.65,
+            'metric_type': 'cits_score'
+        }
+    
+    def _evaluate_attribute_balance(self, counterfactuals: List[Dict]) -> Dict[str, Any]:
+        """Evaluate balance across all attributes."""
+        from collections import defaultdict
+        
+        attr_distributions = defaultdict(lambda: defaultdict(int))
+        
+        for cf in counterfactuals:
+            target_attrs = cf.get('target_attributes', {})
+            for attr, value in target_attrs.items():
+                attr_distributions[attr][value] += 1
+        
+        balance_scores = {}
+        for attr, value_counts in attr_distributions.items():
+            total = sum(value_counts.values())
+            if total == 0:
+                continue
+                
+            # Calculate entropy-based balance score
+            proportions = [count / total for count in value_counts.values()]
+            entropy = -sum(p * math.log(p) if p > 0 else 0 for p in proportions)
+            max_entropy = math.log(len(proportions)) if len(proportions) > 1 else 1
+            
+            balance_score = entropy / max_entropy if max_entropy > 0 else 1.0
+            balance_scores[attr] = balance_score
+        
+        overall_balance = sum(balance_scores.values()) / len(balance_scores) if balance_scores else 0.0
+        
+        return {
+            'overall_balance': overall_balance,
+            'attribute_balance_scores': balance_scores,
+            'passes_threshold': overall_balance >= 0.7,
+            'metric_type': 'attribute_balance'
+        }
+    
+    def _compile_summary(self, results: Dict[str, Any]) -> Dict[str, Any]:
+        """Compile evaluation summary from individual metric results."""
+        valid_results = {k: v for k, v in results.items() if 'error' not in v}
+        
+        if not valid_results:
+            return {
+                'overall_fairness_score': 0.0,
+                'fairness_rating': 'poor',
+                'metrics_passed': 0,
+                'total_metrics': len(results),
+                'pass_rate': 0.0
+            }
+        
+        # Extract scores from different metric types
+        scores = []
+        passing_metrics = 0
+        
+        for metric_name, metric_data in valid_results.items():
+            if 'overall_balance_score' in metric_data:
+                scores.append(metric_data['overall_balance_score'])
+            elif 'fairness_score' in metric_data:
+                scores.append(metric_data['fairness_score'])
+            elif 'cits_score' in metric_data:
+                scores.append(metric_data['cits_score'])
+            elif 'overall_balance' in metric_data:
+                scores.append(metric_data['overall_balance'])
+            
+            # Count passing metrics
+            if metric_data.get('passes_threshold', False):
+                passing_metrics += 1
+        
+        # Calculate overall fairness score
+        overall_score = sum(scores) / len(scores) if scores else 0.0
+        
+        # Determine rating
+        if overall_score >= 0.8:
+            rating = 'excellent'
+        elif overall_score >= 0.7:
+            rating = 'good'
+        elif overall_score >= 0.5:
+            rating = 'fair'
+        else:
+            rating = 'poor'
+        
+        return {
+            'overall_fairness_score': overall_score,
+            'fairness_rating': rating,
+            'metrics_passed': passing_metrics,
+            'total_metrics': len(results),
+            'pass_rate': passing_metrics / len(results) if results else 0.0,
+            'component_scores': scores
+        }
+    
+    def _validate_results(self, results: Dict[str, Any]) -> bool:
+        """Validate evaluation results."""
+        if not results:
+            return False
+        
+        # Check if any metrics passed
+        for metric_data in results.values():
+            if isinstance(metric_data, dict) and metric_data.get('passes_threshold', False):
+                return True
+        
+        return False
+    
+    def get_evaluation_stats(self) -> Dict[str, Any]:
+        """Get evaluator performance statistics."""
+        uptime = time.time() - self.stats['start_time']
+        
+        return {
+            'total_evaluations': self.stats['total_evaluations'],
+            'cache_hit_rate': self.stats['cache_hits'] / max(1, self.stats['total_evaluations']),
+            'parallel_evaluations': self.stats['parallel_evaluations'],
+            'evaluations_per_hour': self.stats['total_evaluations'] / (uptime / 3600) if uptime > 0 else 0,
+            'max_workers': self.max_workers,
+            'uptime_hours': uptime / 3600,
+            'status': 'healthy',
+            'cache_stats': self.cache.get_stats() if hasattr(self.cache, 'get_stats') else {}
+        }
+    
+    def generate_report(self, evaluation_results: Dict[str, Any], 
+                       format: str = "detailed", export_path: str = None) -> Dict[str, Any]:
+        """Generate evaluation report."""
+        report = {
+            'report_type': f'bias_evaluation_{format}',
+            'timestamp': datetime.now().isoformat(),
+            'summary': evaluation_results.get('summary', {}),
+            'metrics_results': evaluation_results.get('metrics', {}),
+            'metadata': evaluation_results.get('metadata', {}),
+            'key_findings': [],
+            'recommendations': []
+        }
+        
+        # Generate key findings
+        summary = evaluation_results.get('summary', {})
+        overall_score = summary.get('overall_fairness_score', 0)
+        
+        if overall_score >= 0.8:
+            report['key_findings'].append("Excellent fairness performance across all metrics")
+        elif overall_score >= 0.7:
+            report['key_findings'].append("Good fairness performance with minor areas for improvement")
+        else:
+            report['key_findings'].append("Fairness performance below recommended thresholds")
+        
+        # Add metric-specific findings
+        metrics = evaluation_results.get('metrics', {})
+        for metric_name, metric_data in metrics.items():
+            if isinstance(metric_data, dict) and 'passes_threshold' in metric_data:
+                if metric_data['passes_threshold']:
+                    report['key_findings'].append(f"{metric_name}: PASSED threshold")
+                else:
+                    report['key_findings'].append(f"{metric_name}: FAILED threshold")
+        
+        # Generate recommendations
+        if overall_score < 0.7:
+            report['recommendations'].append("Increase diversity in counterfactual generation")
+            report['recommendations'].append("Review attribute distribution balance")
+        
+        if summary.get('pass_rate', 0) < 0.8:
+            report['recommendations'].append("Focus on failing metrics for targeted improvement")
+        
+        # Export if path provided
+        if export_path:
+            try:
+                with open(export_path, 'w') as f:
+                    json.dump(report, f, indent=2, default=str)
+                report['exported_to'] = export_path
+            except Exception as e:
+                logger.error(f"Failed to export report: {e}")
+                report['export_error'] = str(e)
+        
+        return report
 
 
 def test_scalable_system():
