@@ -1,0 +1,114 @@
+{
+  "total_benchmarks": 5,
+  "passed": 5,
+  "success_rate": 100.0,
+  "total_duration": 1.6976597309112549,
+  "results": {
+    "Memory Stress Test": {
+      "duration": 0.10788583755493164,
+      "initial_memory": 12.68359375,
+      "final_memory": 55.72265625,
+      "memory_growth": 43.0390625,
+      "status": "PASS"
+    },
+    "Concurrency Test": {
+      "total_duration": 0.11210012435913086,
+      "workers_completed": 5,
+      "errors": 0,
+      "average_worker_time": 0.11044983863830567,
+      "error_details": [],
+      "status": "PASS"
+    },
+    "Algorithm Performance": {
+      "scale_tests": {
+        "scale_5": {
+          "generation_time": 0.05075860023498535,
+          "evaluation_time": 2.956390380859375e-05,
+          "total_time": 0.050791025161743164,
+          "samples_per_second": 98.44258870691395,
+          "memory_efficient": true,
+          "quality_score": 0.7200000000000001
+        },
+        "scale_10": {
+          "generation_time": 0.10172247886657715,
+          "evaluation_time": 2.8848648071289062e-05,
+          "total_time": 0.10175299644470215,
+          "samples_per_second": 98.27720410606796,
+          "memory_efficient": true,
+          "quality_score": 0.7200000000000001
+        },
+        "scale_25": {
+          "generation_time": 0.25440263748168945,
+          "evaluation_time": 5.745887756347656e-05,
+          "total_time": 0.25446224212646484,
+          "samples_per_second": 98.24640304621416,
+          "memory_efficient": true,
+          "quality_score": 0.7200000000000001
+        },
+        "scale_50": {
+          "generation_time": 0.5101284980773926,
+          "evaluation_time": 3.9577484130859375e-05,
+          "total_time": 0.510169267654419,
+          "samples_per_second": 98.00668752526515,
+          "memory_efficient": true,
+          "quality_score": 0.7200000000000001
+        }
+      },
+      "scaling_efficiency": 0.9955720264229685,
+      "max_throughput": 98.44258870691395,
+      "status": "PASS"
+    },
+    "Error Handling Stress": {
+      "duration": 0.007058858871459961,
+      "errors_generated": 50,
+      "errors_handled": 50,
+      "handling_rate": 1.0,
+      "average_handling_time": 0.00014117717742919922,
+      "error_statistics": {
+        "total_errors": 50,
+        "error_types": {
+          "ValueError": 10,
+          "RuntimeError": 10,
+          "KeyError": 10,
+          "TypeError": 10,
+          "Exception": 10
+        },
+        "components": {
+          "test_component_0": 10,
+          "test_component_1": 10,
+          "test_component_2": 10,
+          "test_component_3": 10,
+          "test_component_4": 10
+        },
+        "recovery_suggested": 0,
+        "recovery_rate": 0.0,
+        "critical_errors": 10,
+        "critical_rate": 0.2
+      },
+      "status": "PASS"
+    },
+    "Resource Utilization": {
+      "total_duration": 0.48480844497680664,
+      "memory_growth": 0.0,
+      "workload_results": {
+        "burst": {
+          "duration": 0.03332257270812988,
+          "memory_delta": 0.0,
+          "efficiency": "good"
+        },
+        "sustained": {
+          "duration": 0.045603275299072266,
+          "memory_delta": 0.0,
+          "efficiency": "good"
+        },
+        "mixed": {
+          "duration": 0.0880272388458252,
+          "memory_delta": 0.0,
+          "efficiency": "good"
+        }
+      },
+      "resource_efficiency": "good",
+      "status": "PASS"
+    }
+  }
+}
