@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Dict, List, Optional, Union, Any, Tuple
 from pathlib import Path
 import warnings
+from contextlib import nullcontext
 
 try:
     import torch
@@ -40,6 +41,11 @@ from counterfactual_lab.exceptions import (
 from counterfactual_lab.validators import InputValidator, SafetyValidator
 from counterfactual_lab.optimization import PerformanceOptimizer, OptimizationConfig
 from counterfactual_lab.monitoring import SystemDiagnostics
+from counterfactual_lab.self_healing_pipeline import get_global_guard
+from counterfactual_lab.enhanced_error_handling import with_error_handling, get_global_error_handler
+from counterfactual_lab.auto_scaling import get_global_load_balancer, ScalingConfig
+from counterfactual_lab.global_compliance import get_global_compliance_manager
+from counterfactual_lab.internationalization import get_global_i18n_manager, translate
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -48,6 +54,7 @@ logger = logging.getLogger(__name__)
 class CounterfactualGenerator:
     """Main interface for generating counterfactual image-text pairs."""
     
+    @with_error_handling("CounterfactualGenerator", "initialization")
     def __init__(self, method: str = "modicf", device: str = "cuda", 
                  use_cache: bool = True, cache_dir: str = "./cache",
                  storage_dir: str = "./data", enable_safety_checks: bool = True,
@@ -122,9 +129,43 @@ class CounterfactualGenerator:
             # Initialize monitoring
             try:
                 self.diagnostics = SystemDiagnostics()
+                
+                # Initialize self-healing pipeline guard
+                self.self_healing_guard = get_global_guard()
+                if not self.self_healing_guard.is_running:
+                    self.self_healing_guard.start_monitoring()
+                    logger.info("Self-healing pipeline guard activated")
+                
+                # Initialize enhanced error handling
+                self.error_handler = get_global_error_handler()
+                logger.info("Enhanced error handling initialized")
+                
+                # Initialize auto-scaling system
+                self.load_balancer = get_global_load_balancer()
+                if not hasattr(self.load_balancer, '_initialized'):
+                    # Register generation worker pool
+                    self.load_balancer.register_worker_pool(
+                        pool_name="generation",
+                        worker_function=self._execute_generation_task,
+                        task_types=["counterfactual_generation", "batch_generation"]
+                    )
+                    self.load_balancer.start_monitoring()
+                    self.load_balancer._initialized = True
+                    logger.info("Auto-scaling system initialized")
+                
+                # Initialize global compliance and i18n
+                self.compliance_manager = get_global_compliance_manager()
+                self.i18n_manager = get_global_i18n_manager()
+                logger.info("Global compliance and i18n systems initialized")
+                    
             except Exception as e:
                 logger.warning(f"Failed to initialize diagnostics: {e}")
                 self.diagnostics = None
+                self.self_healing_guard = None
+                self.error_handler = None
+                self.load_balancer = None
+                self.compliance_manager = None
+                self.i18n_manager = None
             
         except (ValidationError, StorageError, ModelInitializationError):
             raise
@@ -132,6 +173,7 @@ class CounterfactualGenerator:
             logger.error(f"Unexpected error during initialization: {e}")
             raise ModelInitializationError(f"Generator initialization failed: {e}")
     
+    @with_error_handling("CounterfactualGenerator", "initialize_method")
     def _initialize_method(self):
         """Initialize the selected generation method."""
         try:
@@ -158,6 +200,7 @@ class CounterfactualGenerator:
         hash_obj = hashlib.sha256(buffer.getvalue())
         return hash_obj.hexdigest()[:16]
     
+    @with_error_handling("CounterfactualGenerator", "generate")
     def generate(
         self,
         image,
@@ -185,124 +228,128 @@ class CounterfactualGenerator:
             GenerationError: If generation fails
             StorageError: If saving fails
         """
-        try:
-            # Validate all inputs
-            validated_image = InputValidator.validate_image(image)
-            validated_text = InputValidator.validate_text(text)
-            validated_attributes = InputValidator.validate_attributes(attributes)
-            validated_num_samples = InputValidator.validate_num_samples(num_samples)
-            
-            # Safety checks if enabled
-            if self.enable_safety_checks:
-                is_ethical, ethical_warnings = SafetyValidator.validate_ethical_use(
-                    validated_text, validated_attributes
-                )
+        # Use self-healing protection for the entire generation process
+        with self.self_healing_guard.protected_operation("generation") if self.self_healing_guard else nullcontext():
+            try:
+                # Validate all inputs
+                validated_image = InputValidator.validate_image(image)
+                validated_text = InputValidator.validate_text(text)
+                validated_attributes = InputValidator.validate_attributes(attributes)
+                validated_num_samples = InputValidator.validate_num_samples(num_samples)
                 
-                if not is_ethical:
-                    logger.warning("Ethical concerns detected:")
-                    for warning in ethical_warnings:
-                        logger.warning(f"  - {warning}")
-                
-                is_private_safe, privacy_warnings = SafetyValidator.validate_data_privacy(
-                    image if isinstance(image, (str, Path)) else None
-                )
-                
-                if not is_private_safe:
-                    logger.warning("Privacy concerns detected:")
-                    for warning in privacy_warnings:
-                        logger.warning(f"  - {warning}")
-            
-            # Generate image hash for caching
-            image_hash = self._generate_image_hash(validated_image)
-            
-            # Check cache first
-            if self.cache_manager and self.use_cache:
-                try:
-                    cached_result = self.cache_manager.get_cached_generation(
-                        method=self.method,
-                        image_hash=image_hash,
-                        text=validated_text,
-                        attributes={attr: "varied" for attr in validated_attributes}
+                # Safety checks if enabled
+                if self.enable_safety_checks:
+                    is_ethical, ethical_warnings = SafetyValidator.validate_ethical_use(
+                        validated_text, validated_attributes
                     )
                     
-                    if cached_result:
-                        logger.info("Using cached generation result")
-                        return cached_result
+                    if not is_ethical:
+                        logger.warning("Ethical concerns detected:")
+                        for warning in ethical_warnings:
+                            logger.warning(f"  - {warning}")
+                    
+                    is_private_safe, privacy_warnings = SafetyValidator.validate_data_privacy(
+                        image if isinstance(image, (str, Path)) else None
+                    )
+                    
+                    if not is_private_safe:
+                        logger.warning("Privacy concerns detected:")
+                        for warning in privacy_warnings:
+                            logger.warning(f"  - {warning}")
+                
+                # Generate image hash for caching
+                image_hash = self._generate_image_hash(validated_image)
+                
+                # Check cache first
+                if self.cache_manager and self.use_cache:
+                    try:
+                        cached_result = self.cache_manager.get_cached_generation(
+                            method=self.method,
+                            image_hash=image_hash,
+                            text=validated_text,
+                            attributes={attr: "varied" for attr in validated_attributes}
+                        )
+                        
+                        if cached_result:
+                            logger.info("Using cached generation result")
+                            return cached_result
+                            
+                    except Exception as e:
+                        logger.warning(f"Cache retrieval failed: {e}")
+                
+                logger.info(f"Generating {validated_num_samples} counterfactuals for attributes: {validated_attributes}")
+                
+                start_time = datetime.now()
+                
+                try:
+                    if self.method == "modicf":
+                        results = self._generate_modicf(validated_image, validated_text, validated_attributes, validated_num_samples)
+                    elif self.method == "icg":
+                        results = self._generate_icg(validated_image, validated_text, validated_attributes, validated_num_samples)
+                    else:
+                        raise GenerationError(f"Unknown method: {self.method}")
+                    
+                    if not results:
+                        raise GenerationError("Generation produced no results")
                         
                 except Exception as e:
-                    logger.warning(f"Cache retrieval failed: {e}")
-            
-            logger.info(f"Generating {validated_num_samples} counterfactuals for attributes: {validated_attributes}")
-            
-            start_time = datetime.now()
-            
-            try:
-                if self.method == "modicf":
-                    results = self._generate_modicf(validated_image, validated_text, validated_attributes, validated_num_samples)
-                elif self.method == "icg":
-                    results = self._generate_icg(validated_image, validated_text, validated_attributes, validated_num_samples)
-                else:
-                    raise GenerationError(f"Unknown method: {self.method}")
+                    logger.error(f"Generation failed: {e}")
+                    raise GenerationError(f"Failed to generate counterfactuals: {e}")
                 
-                if not results:
-                    raise GenerationError("Generation produced no results")
-                    
-            except Exception as e:
-                logger.error(f"Generation failed: {e}")
-                raise GenerationError(f"Failed to generate counterfactuals: {e}")
-            
-            generation_time = (datetime.now() - start_time).total_seconds()
-            
-            final_result = {
-                "method": self.method,
-                "original_image": validated_image,
-                "original_text": validated_text,
-                "target_attributes": validated_attributes,
-                "counterfactuals": results,
-                "metadata": {
-                    "generation_time": generation_time,
-                    "num_samples": len(results),
-                    "device": self.device,
-                    "timestamp": datetime.now().isoformat(),
-                    "image_hash": image_hash,
-                    "validation_passed": True,
-                    "safety_checks_enabled": self.enable_safety_checks
+                generation_time = (datetime.now() - start_time).total_seconds()
+                
+                final_result = {
+                    "method": self.method,
+                    "original_image": validated_image,
+                    "original_text": validated_text,
+                    "target_attributes": validated_attributes,
+                    "counterfactuals": results,
+                    "metadata": {
+                        "generation_time": generation_time,
+                        "num_samples": len(results),
+                        "device": self.device,
+                        "timestamp": datetime.now().isoformat(),
+                        "image_hash": image_hash,
+                        "validation_passed": True,
+                        "safety_checks_enabled": self.enable_safety_checks,
+                        "self_healing_enabled": self.self_healing_guard is not None
+                    }
                 }
-            }
-            
-            # Cache the result
-            if self.cache_manager and self.use_cache:
-                try:
-                    self.cache_manager.cache_generation_result(
-                        method=self.method,
-                        image_hash=image_hash,
-                        text=validated_text,
-                        attributes={attr: "varied" for attr in validated_attributes},
-                        result=final_result
-                    )
-                except Exception as e:
-                    logger.warning(f"Failed to cache result: {e}")
-            
-            # Save to persistent storage if requested
-            if save_results:
-                try:
-                    saved_info = self.storage_manager.save_counterfactual_result(
-                        final_result, experiment_id
-                    )
-                    final_result["metadata"]["saved_experiment_id"] = saved_info["experiment_id"]
-                    logger.info(f"Results saved with experiment ID: {saved_info['experiment_id']}")
-                except Exception as e:
-                    logger.error(f"Failed to save results: {e}")
-                    raise StorageError(f"Storage operation failed: {e}")
-            
-            return final_result
-            
-        except (ValidationError, GenerationError, StorageError):
-            raise
-        except Exception as e:
-            logger.error(f"Unexpected error during generation: {e}")
-            raise GenerationError(f"Counterfactual generation failed: {e}")
+                
+                # Cache the result
+                if self.cache_manager and self.use_cache:
+                    try:
+                        self.cache_manager.cache_generation_result(
+                            method=self.method,
+                            image_hash=image_hash,
+                            text=validated_text,
+                            attributes={attr: "varied" for attr in validated_attributes},
+                            result=final_result
+                        )
+                    except Exception as e:
+                        logger.warning(f"Failed to cache result: {e}")
+                
+                # Save to persistent storage if requested
+                if save_results:
+                    try:
+                        saved_info = self.storage_manager.save_counterfactual_result(
+                            final_result, experiment_id
+                        )
+                        final_result["metadata"]["saved_experiment_id"] = saved_info["experiment_id"]
+                        logger.info(f"Results saved with experiment ID: {saved_info['experiment_id']}")
+                    except Exception as e:
+                        logger.error(f"Failed to save results: {e}")
+                        raise StorageError(f"Storage operation failed: {e}")
+                
+                return final_result
+                
+            except (ValidationError, GenerationError, StorageError):
+                raise
+            except Exception as e:
+                logger.error(f"Unexpected error during generation: {e}")
+                raise GenerationError(f"Counterfactual generation failed: {e}")
     
+    @with_error_handling("CounterfactualGenerator", "generate_batch")
     def generate_batch(self, requests: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Generate counterfactuals for multiple requests efficiently.
         
@@ -377,6 +424,53 @@ class CounterfactualGenerator:
                 status["diagnostics"] = self.diagnostics.run_full_diagnostics()
             except Exception as e:
                 status["diagnostics"] = {"error": str(e)}
+        
+        # Add self-healing status
+        if self.self_healing_guard:
+            try:
+                status["self_healing"] = self.self_healing_guard.get_system_status()
+            except Exception as e:
+                status["self_healing"] = {"error": str(e)}
+        
+        # Add error handling status
+        if self.error_handler:
+            try:
+                status["error_handling"] = {
+                    "statistics": self.error_handler.get_error_statistics(),
+                    "recent_errors": len(self.error_handler.get_recent_errors(hours=1))
+                }
+            except Exception as e:
+                status["error_handling"] = {"error": str(e)}
+        
+        # Add auto-scaling status
+        if self.load_balancer:
+            try:
+                status["auto_scaling"] = self.load_balancer.get_global_statistics()
+            except Exception as e:
+                status["auto_scaling"] = {"error": str(e)}
+        
+        # Add global compliance status
+        if self.compliance_manager:
+            try:
+                status["compliance"] = {
+                    "region": self.compliance_manager.primary_region,
+                    "audit_records": len(self.compliance_manager.audit_records),
+                    "processing_logs": len(self.compliance_manager.processing_logs),
+                    "frameworks": list(self.compliance_manager.compliance_frameworks.keys())
+                }
+            except Exception as e:
+                status["compliance"] = {"error": str(e)}
+        
+        # Add internationalization status
+        if self.i18n_manager:
+            try:
+                status["internationalization"] = {
+                    "current_locale": self.i18n_manager.current_locale,
+                    "supported_locales": list(self.i18n_manager.supported_locales.keys()),
+                    "translations_loaded": len(self.i18n_manager.translations)
+                }
+            except Exception as e:
+                status["internationalization"] = {"error": str(e)}
         
         return status
     
@@ -486,6 +580,49 @@ class CounterfactualGenerator:
         
         return results
     
+    def _execute_generation_task(self, task_type: str, *args, **kwargs) -> Dict[str, Any]:
+        """Execute generation task for auto-scaling worker pool.
+        
+        Args:
+            task_type: Type of generation task
+            *args, **kwargs: Task arguments
+            
+        Returns:
+            Generation result
+        """
+        if task_type == "counterfactual_generation":
+            return self._generate_single_counterfactual(*args, **kwargs)
+        elif task_type == "batch_generation":
+            return self._generate_batch_item(*args, **kwargs)
+        else:
+            raise ValueError(f"Unknown task type: {task_type}")
+    
+    def _generate_single_counterfactual(self, image, text: str, attributes: List[str], 
+                                      sample_id: int = 0) -> Dict[str, Any]:
+        """Generate a single counterfactual for auto-scaling."""
+        try:
+            if self.method == "modicf":
+                results = self._generate_modicf(image, text, attributes, 1)
+            elif self.method == "icg":
+                results = self._generate_icg(image, text, attributes, 1)
+            else:
+                raise GenerationError(f"Unknown method: {self.method}")
+            
+            if results:
+                result = results[0]
+                result["sample_id"] = sample_id
+                return result
+            else:
+                raise GenerationError("No results generated")
+                
+        except Exception as e:
+            logger.error(f"Single counterfactual generation failed: {e}")
+            raise GenerationError(f"Failed to generate counterfactual: {e}")
+    
+    def _generate_batch_item(self, request: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate counterfactuals for a single batch item."""
+        return self.generate(**request)
+    
     def visualize_grid(self, counterfactuals: Dict, save_path: Optional[str] = None):
         """Visualize counterfactuals in a grid format."""
         if not TORCH_AVAILABLE:
@@ -548,11 +685,14 @@ class CounterfactualGenerator:
 class BiasEvaluator:
     """Evaluates bias in vision-language models using counterfactuals."""
     
+    @with_error_handling("BiasEvaluator", "initialization") 
     def __init__(self, model):
         """Initialize bias evaluator with a model."""
         self.model = model
+        self.error_handler = get_global_error_handler()
         logger.info(f"Initialized BiasEvaluator with model: {type(model).__name__}")
     
+    @with_error_handling("BiasEvaluator", "evaluate")
     def evaluate(
         self,
         counterfactuals: Dict,
