@@ -1,0 +1,855 @@
+{
+  "test_results": {
+    "execution_summary": {
+      "total_time": 76.02365469932556,
+      "success_rate": 100.0,
+      "passed": 4,
+      "total": 4,
+      "timestamp": "2025-08-16 23:47:50"
+    },
+    "generation_results": {
+      "generation_1": {
+        "status": "PASSED",
+        "system": "Minimal - Basic functionality working",
+        "features": [
+          "Basic generation",
+          "Simple evaluation",
+          "Mock image handling"
+        ],
+        "result": {
+          "generation_results": {
+            "method": "modicf",
+            "original_image": "MockImage(400x300, RGB)",
+            "original_text": "A doctor examining a patient",
+            "target_attributes": [
+              "gender",
+              "age"
+            ],
+            "counterfactuals": [
+              {
+                "sample_id": 0,
+                "target_attributes": {
+                  "gender": "female",
+                  "age": "young"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "young A doctor examining a patient",
+                "confidence": 0.8473834364682096,
+                "explanation": "Applied modicf to modify gender, age"
+              },
+              {
+                "sample_id": 1,
+                "target_attributes": {
+                  "gender": "female",
+                  "age": "middle-aged"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "A doctor examining a patient",
+                "confidence": 0.8236140052665849,
+                "explanation": "Applied modicf to modify gender, age"
+              },
+              {
+                "sample_id": 2,
+                "target_attributes": {
+                  "gender": "female",
+                  "age": "young"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "young A doctor examining a patient",
+                "confidence": 0.7714003070339134,
+                "explanation": "Applied modicf to modify gender, age"
+              }
+            ],
+            "metadata": {
+              "generation_time": 4.4e-05,
+              "num_samples": 3,
+              "device": "cpu",
+              "timestamp": "2025-08-16T23:46:34.959423",
+              "generation_id": 1
+            }
+          },
+          "evaluation_results": {
+            "evaluation_timestamp": "2025-08-16T23:46:34.959562",
+            "evaluation_id": 1,
+            "metrics": {
+              "demographic_parity": {
+                "parity_score": 1.0,
+                "violations_detected": 0,
+                "total_groups": 2,
+                "passes_threshold": true
+              },
+              "cits_score": {
+                "individual_scores": [
+                  0.7626450928213886,
+                  0.7412526047399264,
+                  0.694260276330522
+                ],
+                "mean_score": 0.7327193246306124,
+                "std_score": 0.028562602982342554,
+                "min_score": 0.694260276330522,
+                "max_score": 0.7626450928213886
+              },
+              "fairness_score": {
+                "overall_fairness_score": 0.5737329581281181,
+                "confidence_component": 0.8141325829229027,
+                "balance_component": 0.33333333333333337,
+                "attribute_distribution": {
+                  "gender_female": 3,
+                  "age_young": 2,
+                  "age_middle-aged": 1
+                },
+                "rating": "Fair"
+              }
+            },
+            "summary": {
+              "overall_fairness_score": 1.0,
+              "passed_metrics": 1,
+              "total_metrics": 1,
+              "fairness_rating": "Excellent"
+            },
+            "counterfactual_analysis": {
+              "attribute_distribution": {
+                "gender": {
+                  "female": 3
+                },
+                "age": {
+                  "young": 2,
+                  "middle-aged": 1
+                }
+              },
+              "confidence_stats": {
+                "mean": 0.8141325829229027,
+                "min": 0.7714003070339134,
+                "max": 0.8473834364682096,
+                "std": 0.03173622553593616
+              },
+              "total_counterfactuals": 3
+            }
+          },
+          "audit_report": {
+            "report_type": "AI Bias Audit Report (Technical)",
+            "report_date": "2025-08-16T23:46:34.959741",
+            "evaluation_id": 1,
+            "executive_summary": {
+              "overall_assessment": "Excellent",
+              "fairness_score": 1.0,
+              "total_counterfactuals": 3,
+              "metrics_evaluated": [
+                "demographic_parity",
+                "cits_score",
+                "fairness_score"
+              ]
+            },
+            "detailed_findings": {
+              "demographic_parity": {
+                "parity_score": 1.0,
+                "violations_detected": 0,
+                "total_groups": 2,
+                "passes_threshold": true
+              },
+              "cits_score": {
+                "individual_scores": [
+                  0.7626450928213886,
+                  0.7412526047399264,
+                  0.694260276330522
+                ],
+                "mean_score": 0.7327193246306124,
+                "std_score": 0.028562602982342554,
+                "min_score": 0.694260276330522,
+                "max_score": 0.7626450928213886
+              },
+              "fairness_score": {
+                "overall_fairness_score": 0.5737329581281181,
+                "confidence_component": 0.8141325829229027,
+                "balance_component": 0.33333333333333337,
+                "attribute_distribution": {
+                  "gender_female": 3,
+                  "age_young": 2,
+                  "age_middle-aged": 1
+                },
+                "rating": "Fair"
+              }
+            },
+            "recommendations": [
+              "Maintain current excellent fairness practices"
+            ],
+            "methodology": {
+              "evaluation_approach": "Minimal counterfactual fairness evaluation",
+              "sample_size": 3
+            }
+          }
+        }
+      },
+      "generation_2": {
+        "status": "PASSED",
+        "system": "Robust - Error handling, security, logging",
+        "features": [
+          "Input validation",
+          "Error handling",
+          "Rate limiting",
+          "Security validation",
+          "Audit logging",
+          "Performance monitoring"
+        ],
+        "result": {
+          "generation_results": {
+            "method": "modicf",
+            "original_image": "MockImage(400x300, RGB)",
+            "original_text": "A professional person working at a computer",
+            "target_attributes": [
+              "gender",
+              "age"
+            ],
+            "counterfactuals": [
+              {
+                "sample_id": 0,
+                "target_attributes": {
+                  "gender": "non-binary",
+                  "age": "elderly"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "elderly A professional person working at a computer",
+                "confidence": 0.726058420594055,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "validation_passed": true
+              },
+              {
+                "sample_id": 1,
+                "target_attributes": {
+                  "gender": "non-binary",
+                  "age": "middle-aged"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "middle-aged A professional person working at a computer",
+                "confidence": 0.7088384299832412,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "validation_passed": true
+              },
+              {
+                "sample_id": 2,
+                "target_attributes": {
+                  "gender": "female",
+                  "age": "middle-aged"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "middle-aged A professional person working at a computer",
+                "confidence": 0.745005532481111,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "validation_passed": true
+              }
+            ],
+            "metadata": {
+              "generation_time": 0.0009598731994628906,
+              "num_samples": 3,
+              "device": "cpu",
+              "timestamp": "2025-08-16T23:46:34.961362",
+              "generation_id": 0,
+              "user_id": "test_user",
+              "security_validated": true,
+              "rate_limit_info": {
+                "current_requests": 1,
+                "max_requests": 5,
+                "window_minutes": 1,
+                "remaining_requests": 4,
+                "reset_time": "2025-08-16T23:46:34.961369"
+              }
+            }
+          },
+          "evaluation_results": {
+            "evaluation_timestamp": "2025-08-16T23:46:34.961948",
+            "evaluation_id": 1,
+            "user_id": "test_user",
+            "metrics": {
+              "demographic_parity": {
+                "attribute_stats": {
+                  "gender": {
+                    "max_difference": 0.02755710719246285,
+                    "group_means": {
+                      "non-binary": 0.7174484252886482,
+                      "female": 0.745005532481111
+                    },
+                    "passes_threshold": true,
+                    "sample_size": 3
+                  },
+                  "age": {
+                    "max_difference": 0.000863560638121097,
+                    "group_means": {
+                      "elderly": 0.726058420594055,
+                      "middle-aged": 0.7269219812321761
+                    },
+                    "passes_threshold": true,
+                    "sample_size": 3
+                  }
+                },
+                "overall_score": 0.014210333915291973,
+                "passes_threshold": true,
+                "total_samples_analyzed": 3,
+                "status": "success"
+              },
+              "cits_score": {
+                "individual_scores": [
+                  0.626058420594055,
+                  0.6088384299832412,
+                  0.645005532481111
+                ],
+                "mean_score": 0.6266341276861357,
+                "std_score": 0.014770768537097387,
+                "min_score": 0.6088384299832412,
+                "max_score": 0.645005532481111,
+                "sample_count": 3,
+                "status": "success"
+              },
+              "fairness_score": {
+                "overall_fairness_score": 0.6133170638430678,
+                "confidence_component": 0.7266341276861358,
+                "balance_component": 0.5,
+                "attribute_distribution": {
+                  "gender_non-binary": 2,
+                  "age_elderly": 1,
+                  "age_middle-aged": 2,
+                  "gender_female": 1
+                },
+                "valid_samples": 3,
+                "rating": "Fair",
+                "status": "success"
+              }
+            },
+            "summary": {
+              "overall_fairness_score": 1.0,
+              "passed_metrics": 1,
+              "total_metrics": 1,
+              "failed_metrics": [],
+              "fairness_rating": "Excellent",
+              "summary_generated": true
+            },
+            "counterfactual_analysis": {
+              "attribute_distribution": {
+                "gender": {
+                  "non-binary": 2,
+                  "female": 1
+                },
+                "age": {
+                  "elderly": 1,
+                  "middle-aged": 2
+                }
+              },
+              "confidence_stats": {
+                "mean": 0.7266341276861358,
+                "std": 0.014770768537097387,
+                "min": 0.7088384299832412,
+                "max": 0.745005532481111,
+                "count": 3
+              },
+              "total_counterfactuals": 3,
+              "valid_samples": 3,
+              "analysis_success": true
+            },
+            "validation_passed": true,
+            "performance": {
+              "evaluation_time": 0.00023818016052246094,
+              "metrics_computed": 3,
+              "metrics_failed": 0
+            }
+          },
+          "health_status": {
+            "status": "unhealthy",
+            "uptime_seconds": 6.010532,
+            "total_generations": 1,
+            "error_count": 3,
+            "performance_metrics": {
+              "total_requests": 4,
+              "successful_requests": 1,
+              "failed_requests": 3,
+              "avg_response_time": 0.00026738643646240234,
+              "error_rate": 0.75
+            },
+            "configuration": {
+              "method": "modicf",
+              "device": "cpu",
+              "rate_limiting_enabled": true,
+              "audit_logging_enabled": true
+            },
+            "timestamp": "2025-08-16T23:46:40.970590"
+          },
+          "evaluation_stats": {
+            "total_evaluations": 1,
+            "error_count": 0,
+            "success_rate": 1.0,
+            "uptime_seconds": 6.009051,
+            "timestamp": "2025-08-16T23:46:40.970642",
+            "status": "operational"
+          },
+          "test_status": "success"
+        }
+      },
+      "generation_3": {
+        "status": "PASSED",
+        "system": "Scalable - Performance, caching, concurrency",
+        "features": [
+          "Intelligent caching",
+          "Worker pool management",
+          "Performance monitoring",
+          "Batch processing",
+          "Concurrent processing",
+          "Auto-scaling",
+          "Health checks"
+        ],
+        "result": {
+          "single_generation": {
+            "method": "modicf",
+            "original_image": "MockImage(400x300, RGB)",
+            "original_text": "Concurrent test 9",
+            "target_attributes": [
+              "gender"
+            ],
+            "counterfactuals": [
+              {
+                "sample_id": 0,
+                "target_attributes": {
+                  "gender": "female"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "Concurrent test 9",
+                "confidence": 0.8357789824637786,
+                "explanation": "Applied modicf to modify gender",
+                "generation_success": true,
+                "processing_time": 0.1253914728918519
+              },
+              {
+                "sample_id": 1,
+                "target_attributes": {
+                  "gender": "male"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "Concurrent test 9",
+                "confidence": 0.8341587916517212,
+                "explanation": "Applied modicf to modify gender",
+                "generation_success": true,
+                "processing_time": 0.48022754208203633
+              }
+            ],
+            "metadata": {
+              "generation_time": 0.003238677978515625,
+              "num_samples": 2,
+              "device": "cpu",
+              "timestamp": "2025-08-16T23:47:40.992973",
+              "request_id": "gen_1755388060989_140233408497344",
+              "user_id": "concurrent_9",
+              "cache_used": false,
+              "parallel_processing": true,
+              "generation_id": 11
+            }
+          },
+          "batch_generation": [
+            {
+              "error": "3 (of 3) futures unfinished",
+              "success": false
+            },
+            {
+              "error": "3 (of 3) futures unfinished",
+              "success": false
+            },
+            {
+              "error": "3 (of 3) futures unfinished",
+              "success": false
+            },
+            {
+              "error": "3 (of 3) futures unfinished",
+              "success": false
+            },
+            {
+              "method": "modicf",
+              "original_image": "MockImage(400x300, RGB)",
+              "original_text": "A researcher analyzing data 4",
+              "target_attributes": [
+                "gender",
+                "race"
+              ],
+              "counterfactuals": [
+                {
+                  "sample_id": 0,
+                  "target_attributes": {
+                    "gender": "non-binary",
+                    "race": "diverse"
+                  },
+                  "generated_image": "MockImage(400x300, RGB)",
+                  "generated_text": "A researcher analyzing data 4",
+                  "confidence": 0.7657092896326979,
+                  "explanation": "Applied modicf to modify gender, race",
+                  "generation_success": true,
+                  "processing_time": 0.1262903004342488
+                },
+                {
+                  "sample_id": 1,
+                  "target_attributes": {
+                    "gender": "non-binary",
+                    "race": "white"
+                  },
+                  "generated_image": "MockImage(400x300, RGB)",
+                  "generated_text": "A researcher analyzing data 4",
+                  "confidence": 0.7758089367556498,
+                  "explanation": "Applied modicf to modify gender, race",
+                  "generation_success": true,
+                  "processing_time": 0.433988403529563
+                },
+                {
+                  "sample_id": 2,
+                  "target_attributes": {
+                    "gender": "male",
+                    "race": "black"
+                  },
+                  "generated_image": "MockImage(400x300, RGB)",
+                  "generated_text": "A researcher analyzing data 4",
+                  "confidence": 0.770827420819815,
+                  "explanation": "Applied modicf to modify gender, race",
+                  "generation_success": true,
+                  "processing_time": 0.1819762908747402
+                }
+              ],
+              "metadata": {
+                "generation_time": 0.0020492076873779297,
+                "num_samples": 3,
+                "device": "cpu",
+                "timestamp": "2025-08-16T23:47:40.981610",
+                "request_id": "gen_1755388060979_140233416890048",
+                "user_id": "batch_user_4",
+                "cache_used": false,
+                "parallel_processing": true,
+                "generation_id": 1
+              }
+            }
+          ],
+          "cached_result": {
+            "method": "modicf",
+            "original_image": "MockImage(400x300, RGB)",
+            "original_text": "A professional software engineer coding at a computer",
+            "target_attributes": [
+              "gender",
+              "age"
+            ],
+            "counterfactuals": [
+              {
+                "sample_id": 0,
+                "target_attributes": {
+                  "gender": "female",
+                  "age": "young"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "young A professional software engineer coding at a computer",
+                "confidence": 0.7503911357180357,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "processing_time": 0.1590724019637475
+              },
+              {
+                "sample_id": 1,
+                "target_attributes": {
+                  "gender": "male",
+                  "age": "middle-aged"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "A professional software engineer coding at a computer",
+                "confidence": 0.7524073541634964,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "processing_time": 0.25062322517935787
+              },
+              {
+                "sample_id": 2,
+                "target_attributes": {
+                  "gender": "non-binary",
+                  "age": "young"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "young A professional software engineer coding at a computer",
+                "confidence": 0.7833468958437946,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "processing_time": 0.2965674373138736
+              },
+              {
+                "sample_id": 3,
+                "target_attributes": {
+                  "gender": "non-binary",
+                  "age": "young"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "young A professional software engineer coding at a computer",
+                "confidence": 0.7625867358760114,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "processing_time": 0.1721931800916562
+              },
+              {
+                "sample_id": 4,
+                "target_attributes": {
+                  "gender": "female",
+                  "age": "elderly"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "elderly A professional software engineer coding at a computer",
+                "confidence": 0.7889599403267074,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "processing_time": 0.475890863567055
+              }
+            ],
+            "metadata": {
+              "generation_time": 0.0016379356384277344,
+              "num_samples": 5,
+              "device": "cpu",
+              "timestamp": "2025-08-16T23:46:40.975139",
+              "request_id": "gen_1755388000973_140233533186176",
+              "user_id": "test_user",
+              "cache_used": false,
+              "parallel_processing": true,
+              "generation_id": 0
+            }
+          },
+          "performance_metrics": {
+            "generator_stats": {
+              "generation_count": 12,
+              "batch_count": 1,
+              "uptime_seconds": 60.023202,
+              "method": "modicf",
+              "device": "cpu"
+            },
+            "timestamp": "2025-08-16T23:47:40.994216",
+            "system_metrics": {
+              "requests_total": 17,
+              "requests_successful": 13,
+              "requests_failed": 4,
+              "avg_response_time": 7.061675394282622,
+              "p95_response_time": 30.00113844871521,
+              "throughput_rps": 0.26666666666666666,
+              "concurrent_requests": 0,
+              "peak_concurrent": 7,
+              "cache_hits": 1,
+              "cache_misses": 16,
+              "memory_usage_mb": 214.95547429214588,
+              "cpu_usage_percent": 24.865510614787453,
+              "cache_hit_rate": 5.88235294117647,
+              "success_rate": 76.47058823529412,
+              "timestamp": "2025-08-16T23:47:40.994261"
+            },
+            "health_score": 60.329441225893476,
+            "cache_stats": {
+              "size": 12,
+              "max_size": 1000,
+              "utilization": 1.2,
+              "total_accesses": 13,
+              "avg_access_count": 1.0833333333333333,
+              "expired_entries": 0
+            },
+            "worker_pool_stats": {
+              "current_workers": 8,
+              "max_workers": 8,
+              "queue_size": 0,
+              "completed_tasks": 55,
+              "avg_queue_size": 12.0
+            }
+          },
+          "health_check": {
+            "status": "degraded",
+            "timestamp": "2025-08-16T23:47:40.982979",
+            "components": {
+              "generator": {
+                "status": "healthy"
+              },
+              "monitoring": {
+                "status": "degraded",
+                "health_score": 39.33054408078513
+              },
+              "cache": {
+                "status": "healthy",
+                "utilization": 0.2
+              },
+              "worker_pool": {
+                "status": "healthy",
+                "workers": 8,
+                "queue_size": 0
+              }
+            }
+          },
+          "optimization_report": {
+            "current_config": {
+              "method": "modicf",
+              "caching_enabled": true,
+              "worker_pool_enabled": true,
+              "monitoring_enabled": true
+            },
+            "optimizations": [
+              "Recommended: Enable parallel processing",
+              "Recommended: Increase cache size"
+            ],
+            "timestamp": "2025-08-16T23:47:40.983160"
+          },
+          "test_status": "success"
+        }
+      },
+      "integration": {
+        "status": "PASSED",
+        "system": "Cross-generation compatibility",
+        "result": {
+          "gen1": {
+            "method": "modicf",
+            "original_image": "MockImage(400x300, RGB)",
+            "original_text": "A software engineer developing AI systems",
+            "target_attributes": [
+              "gender",
+              "age"
+            ],
+            "counterfactuals": [
+              {
+                "sample_id": 0,
+                "target_attributes": {
+                  "gender": "non-binary",
+                  "age": "elderly"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "elderly A software engineer developing AI systems",
+                "confidence": 0.7522938007018509,
+                "explanation": "Applied modicf to modify gender, age"
+              },
+              {
+                "sample_id": 1,
+                "target_attributes": {
+                  "gender": "male",
+                  "age": "young"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "young A software engineer developing AI systems",
+                "confidence": 0.8011193570486084,
+                "explanation": "Applied modicf to modify gender, age"
+              }
+            ],
+            "metadata": {
+              "generation_time": 4.5e-05,
+              "num_samples": 2,
+              "device": "cpu",
+              "timestamp": "2025-08-16T23:47:45.980318",
+              "generation_id": 1
+            }
+          },
+          "gen2": {
+            "method": "modicf",
+            "original_image": "MockImage(400x300, RGB)",
+            "original_text": "A software engineer developing AI systems",
+            "target_attributes": [
+              "gender",
+              "age"
+            ],
+            "counterfactuals": [
+              {
+                "sample_id": 0,
+                "target_attributes": {
+                  "gender": "non-binary",
+                  "age": "young"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "young A software engineer developing AI systems",
+                "confidence": 0.7918807401281933,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "validation_passed": true
+              },
+              {
+                "sample_id": 1,
+                "target_attributes": {
+                  "gender": "female",
+                  "age": "elderly"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "elderly A software engineer developing AI systems",
+                "confidence": 0.7073776200804979,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "validation_passed": true
+              }
+            ],
+            "metadata": {
+              "generation_time": 0.0001747608184814453,
+              "num_samples": 2,
+              "device": "cpu",
+              "timestamp": "2025-08-16T23:47:45.980623",
+              "generation_id": 0,
+              "user_id": "anonymous",
+              "security_validated": true,
+              "rate_limit_info": null
+            }
+          },
+          "gen3": {
+            "method": "modicf",
+            "original_image": "MockImage(400x300, RGB)",
+            "original_text": "A software engineer developing AI systems",
+            "target_attributes": [
+              "gender",
+              "age"
+            ],
+            "counterfactuals": [
+              {
+                "sample_id": 0,
+                "target_attributes": {
+                  "gender": "male",
+                  "age": "young"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "young A software engineer developing AI systems",
+                "confidence": 0.771923920509526,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "processing_time": 0.24675510378254284
+              },
+              {
+                "sample_id": 1,
+                "target_attributes": {
+                  "gender": "non-binary",
+                  "age": "middle-aged"
+                },
+                "generated_image": "MockImage(400x300, RGB)",
+                "generated_text": "A software engineer developing AI systems",
+                "confidence": 0.7948067460169215,
+                "explanation": "Applied modicf to modify gender, age",
+                "generation_success": true,
+                "processing_time": 0.1456392565737069
+              }
+            ],
+            "metadata": {
+              "generation_time": 0.00045108795166015625,
+              "num_samples": 2,
+              "device": "cpu",
+              "timestamp": "2025-08-16T23:47:45.982165",
+              "request_id": "gen_1755388065981_140233533186176",
+              "user_id": "anonymous",
+              "cache_used": false,
+              "parallel_processing": true,
+              "generation_id": 0
+            }
+          }
+        }
+      }
+    }
+  },
+  "demo_results": {
+    "generation_1_demo": {
+      "time": 0.0001761913299560547,
+      "samples": 3,
+      "features": "Basic functionality"
+    },
+    "generation_2_demo": {
+      "time": 0.0010707378387451172,
+      "samples": 3,
+      "features": "Robust error handling, security, logging"
+    },
+    "generation_3_demo": {
+      "first_time": 0.0010449886322021484,
+      "cached_time": 0.0006968975067138672,
+      "batch_time": 0.0027189254760742188,
+      "batch_success": "3/3",
+      "features": "Caching, concurrency, batch processing, monitoring"
+    }
+  }
+}
