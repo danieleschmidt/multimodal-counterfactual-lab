@@ -22,7 +22,7 @@ pytest==8.2.2
     # via multimodal-counterfactual-lab (pyproject.toml)
 pytest-cov==6.2.1
     # via multimodal-counterfactual-lab (pyproject.toml)
-pytest-xdist==3.6.0
+pytest-xdist==3.8.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 ruff==0.4.8
     # via multimodal-counterfactual-lab (pyproject.toml)
