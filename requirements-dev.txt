@@ -10,7 +10,7 @@ mkdocs-material==9.6.16
     # via multimodal-counterfactual-lab (pyproject.toml)
 mkdocstrings[python]==0.30.0
     # via multimodal-counterfactual-lab (pyproject.toml)
-mutmut==2.4.3
+mutmut==3.3.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 mutpy==0.6.1
     # via multimodal-counterfactual-lab (pyproject.toml)
