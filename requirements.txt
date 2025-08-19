@@ -24,7 +24,7 @@ opencv-python==4.12.0.88
     # via multimodal-counterfactual-lab (pyproject.toml)
 pandas==2.2.2
     # via multimodal-counterfactual-lab (pyproject.toml)
-pillow==10.3.0
+pillow==11.3.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 plotly==6.2.0
     # via multimodal-counterfactual-lab (pyproject.toml)
