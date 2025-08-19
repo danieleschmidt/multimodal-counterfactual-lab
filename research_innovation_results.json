@@ -16,31 +16,31 @@
         "hidden_dim": 256
       }
     },
-    "intersectional_fairness_index": 0.8724632051317766,
+    "intersectional_fairness_index": 0.8660852604635996,
     "graph_coherence_score": 0.6233516483516484,
     "coverage_diversity": 0.4666666666666667,
     "statistical_validation": {
       "tests": [
         {
           "sample_size": 50,
-          "test_statistic": 2.8449999999999998,
-          "p_value": 0.0199,
+          "test_statistic": 2.59,
+          "p_value": 0.019700000000000002,
           "significant": true,
-          "effect_size": 0.3
+          "effect_size": 0.46399999999999997
         },
         {
           "sample_size": 100,
-          "test_statistic": 2.995,
-          "p_value": 0.0128,
+          "test_statistic": 2.985,
+          "p_value": 0.018500000000000003,
           "significant": true,
-          "effect_size": 0.45199999999999996
+          "effect_size": 0.322
         },
         {
           "sample_size": 150,
-          "test_statistic": 2.5,
-          "p_value": 0.0176,
+          "test_statistic": 2.91,
+          "p_value": 0.0111,
           "significant": true,
-          "effect_size": 0.436
+          "effect_size": 0.44199999999999995
         }
       ],
       "overall_significance": 1.0,
@@ -48,12 +48,12 @@
     }
   },
   "research_metrics": {
-    "intersectional_fairness_index": 0.8724632051317766,
+    "intersectional_fairness_index": 0.8660852604635996,
     "graph_coherence_score": 0.6233516483516484,
     "coverage_diversity": 0.4666666666666667,
     "statistical_significance": 1.0,
     "novel_algorithm_performance": 0.85,
-    "research_contribution_score": 0.740620380037523
+    "research_contribution_score": 0.7390258938704787
   },
   "publication_assessment": {
     "criteria": {
@@ -66,7 +66,7 @@
     "overall_readiness": 1.0,
     "recommendation": "Publication Ready - Strong research contributions with solid validation"
   },
-  "execution_time": 0.001615285873413086,
+  "execution_time": 0.0010111331939697266,
   "research_contributions": [
     "First graph-based approach to intersectional counterfactual generation",
     "Novel Intersectional Fairness Index (IFI) metric",
