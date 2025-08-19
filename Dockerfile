@@ -1,5 +1,5 @@
 # Multi-stage build for efficient container size and security
-FROM python:3.13-slim as builder
+FROM python:3.13.7-slim as builder
 
 # Set security-focused labels
 LABEL maintainer="daniel@terragon.ai" \
@@ -28,7 +28,7 @@ COPY src/ ./src/
 RUN pip install --no-cache-dir -e .
 
 # Production stage
-FROM python:3.13-slim as production
+FROM python:3.13.7-slim as production
 
 # Install runtime system dependencies with security updates
 RUN apt-get update && apt-get install -y --no-install-recommends \
