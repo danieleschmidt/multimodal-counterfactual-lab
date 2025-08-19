@@ -36,7 +36,7 @@ seaborn==0.13.2
     # via multimodal-counterfactual-lab (pyproject.toml)
 streamlit==1.35.0
     # via multimodal-counterfactual-lab (pyproject.toml)
-torch==2.3.0
+torch==2.8.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 tqdm==4.67.1
     # via multimodal-counterfactual-lab (pyproject.toml)
