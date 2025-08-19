@@ -4,7 +4,7 @@
 
 black==25.1.0
     # via multimodal-counterfactual-lab (pyproject.toml)
-mkdocs==1.6.0
+mkdocs==1.6.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 mkdocs-material==9.6.16
     # via multimodal-counterfactual-lab (pyproject.toml)
