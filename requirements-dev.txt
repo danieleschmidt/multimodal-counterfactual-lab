@@ -2,7 +2,7 @@
 # Generated from pyproject.toml [dev] extra
 # This file is used for reproducible development environments
 
-black==24.4.2
+black==25.1.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 mkdocs==1.6.0
     # via multimodal-counterfactual-lab (pyproject.toml)
