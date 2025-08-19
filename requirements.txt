@@ -28,7 +28,7 @@ pillow==11.3.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 plotly==6.2.0
     # via multimodal-counterfactual-lab (pyproject.toml)
-pydantic==2.7.1
+pydantic==2.11.7
     # via multimodal-counterfactual-lab (pyproject.toml)
 scikit-learn==1.4.2
     # via multimodal-counterfactual-lab (pyproject.toml)
