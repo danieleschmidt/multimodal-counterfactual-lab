@@ -10,7 +10,7 @@ albumentations==1.4.10
     # via multimodal-counterfactual-lab (pyproject.toml)
 click==8.2.1
     # via multimodal-counterfactual-lab (pyproject.toml)
-diffusers==0.27.2
+diffusers==0.34.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 fairlearn==0.10.0
     # via multimodal-counterfactual-lab (pyproject.toml)
