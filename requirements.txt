@@ -6,7 +6,7 @@ accelerate==1.10.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 aif360==0.6.1
     # via multimodal-counterfactual-lab (pyproject.toml)
-albumentations==1.4.10
+albumentations==2.0.8
     # via multimodal-counterfactual-lab (pyproject.toml)
 click==8.2.1
     # via multimodal-counterfactual-lab (pyproject.toml)
