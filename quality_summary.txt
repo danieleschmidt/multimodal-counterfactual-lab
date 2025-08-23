@@ -1,27 +1,27 @@
 🧪 COMPREHENSIVE QUALITY GATES REPORT
 ==================================================
 
-Timestamp: 2025-08-18T12:24:25.012250
+Timestamp: 2025-08-23T13:10:06.254854
 Overall Status: ACCEPTABLE
-Execution Time: 0.84 seconds
+Execution Time: 1.13 seconds
 
 📊 TEST RESULTS:
-  unit_tests: 170/199 (85.4%)
-  integration_tests: 11/15 (73.3%)
+  unit_tests: 166/199 (83.4%)
+  integration_tests: 14/15 (93.3%)
   e2e_tests: 5/6 (83.3%)
   mutation_tests: 0/0 (0.0%)
 
 📈 QUALITY METRICS:
-  Test Coverage: 84.7%
-  Maintainability Index: 87.3
-  Technical Debt: 10117 minutes
+  Test Coverage: 88.1%
+  Maintainability Index: 87.2
+  Technical Debt: 14620 minutes
 
 🔒 SECURITY SCAN:
-  Security Score: 95.0/100
-  Risk Level: LOW
-  Vulnerabilities: 0 critical, 0 high, 1 medium
+  Security Score: 80.0/100
+  Risk Level: CRITICAL
+  Vulnerabilities: 1 critical, 0 high, 0 medium
 
 ⚡ PERFORMANCE:
-  Performance Score: 105.3/100
+  Performance Score: 104.7/100
   Regression Detected: False
-  Average Change: 5.3%
+  Average Change: 4.7%
