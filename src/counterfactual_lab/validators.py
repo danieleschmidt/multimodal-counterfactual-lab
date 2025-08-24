@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class InputValidator:
     """Validates inputs for counterfactual generation and evaluation."""
     
-    SUPPORTED_METHODS = ["modicf", "icg"]
+    SUPPORTED_METHODS = ["modicf", "icg", "nacs-cf"]
     
     SUPPORTED_ATTRIBUTES = {
         "gender": ["male", "female", "non-binary"],
