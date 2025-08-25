@@ -18,7 +18,7 @@ mypy==1.17.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 pre-commit==4.2.0
     # via multimodal-counterfactual-lab (pyproject.toml)
-pytest==8.2.2
+pytest==8.4.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 pytest-cov==6.2.1
     # via multimodal-counterfactual-lab (pyproject.toml)
