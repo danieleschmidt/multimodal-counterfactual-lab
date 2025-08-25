@@ -26,7 +26,7 @@ pandas==2.3.2
     # via multimodal-counterfactual-lab (pyproject.toml)
 pillow==11.3.0
     # via multimodal-counterfactual-lab (pyproject.toml)
-plotly==6.2.0
+plotly==6.3.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 pydantic==2.11.7
     # via multimodal-counterfactual-lab (pyproject.toml)
