@@ -24,7 +24,7 @@ pytest-cov==6.2.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 pytest-xdist==3.8.0
     # via multimodal-counterfactual-lab (pyproject.toml)
-ruff==0.4.8
+ruff==0.12.10
     # via multimodal-counterfactual-lab (pyproject.toml)
 
 # Include all core dependencies
