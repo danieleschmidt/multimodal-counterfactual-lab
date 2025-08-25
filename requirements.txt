@@ -18,7 +18,7 @@ kornia==0.8.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 matplotlib==3.10.5
     # via multimodal-counterfactual-lab (pyproject.toml)
-numpy==1.26.4
+numpy==2.2.6
     # via multimodal-counterfactual-lab (pyproject.toml)
 opencv-python==4.12.0.88
     # via multimodal-counterfactual-lab (pyproject.toml)
