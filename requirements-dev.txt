@@ -14,7 +14,7 @@ mutmut==3.3.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 mutpy==0.6.1
     # via multimodal-counterfactual-lab (pyproject.toml)
-mypy==1.17.1
+mypy==1.18.1
     # via multimodal-counterfactual-lab (pyproject.toml)
 pre-commit==4.3.0
     # via multimodal-counterfactual-lab (pyproject.toml)
