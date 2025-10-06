@@ -40,5 +40,5 @@ torch==2.8.0
     # via multimodal-counterfactual-lab (pyproject.toml)
 tqdm==4.67.1
     # via multimodal-counterfactual-lab (pyproject.toml)
-transformers==4.55.4
+transformers==4.57.0
     # via multimodal-counterfactual-lab (pyproject.toml)
