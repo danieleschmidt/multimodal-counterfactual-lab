@@ -1,1 +1,0 @@
-"""End-to-end tests for Multimodal Counterfactual Lab."""

@@ -1,49 +1,50 @@
-"""Multimodal Counterfactual Lab.
+"""
+multimodal-counterfactual-lab
+=============================
 
-A data-generation studio that creates counterfactual image-text pairs
-for fairness and robustness research.
+A toolkit for generating counterfactual image-text pairs to support
+fairness and robustness research in vision-language models.
+
+Quick start
+-----------
+>>> from counterfactual_lab import CounterfactualGenerator, BiasEvaluator
+>>> gen = CounterfactualGenerator()
+>>> result = gen.generate("The doctor examined his patient carefully.")
+>>> evaluator = BiasEvaluator(model=my_classifier)
+>>> report = evaluator.evaluate(result)
+>>> print(report.summary())
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Daniel Schmidt"
-__email__ = "daniel@terragon.ai"
 
-# Progressive capability detection and import
-# Try scalable -> robust -> full -> lightweight in order of capability
-try:
-    from counterfactual_lab.scalable_core import (
-        ScalableCounterfactualGenerator as CounterfactualGenerator,
-        ScalableBiasEvaluator as BiasEvaluator
-    )
-    _implementation_level = "scalable"
-    _using_lightweight = False
-except ImportError:
-    try:
-        from counterfactual_lab.robust_core import (
-            RobustCounterfactualGenerator as CounterfactualGenerator,
-            RobustBiasEvaluator as BiasEvaluator
-        )
-        _implementation_level = "robust"
-        _using_lightweight = False
-    except ImportError:
-        try:
-            from counterfactual_lab.core import CounterfactualGenerator, BiasEvaluator
-            _implementation_level = "full"
-            _using_lightweight = False
-        except ImportError as e:
-            # Fall back to lightweight implementation
-            from counterfactual_lab.lightweight_core import (
-                LightweightCounterfactualGenerator as CounterfactualGenerator,
-                LightweightBiasEvaluator as BiasEvaluator
-            )
-            _implementation_level = "lightweight"
-            _using_lightweight = True
-            import warnings
-            warnings.warn(f"Using lightweight implementation due to missing dependencies: {e}")
+from counterfactual_lab.perturbations import (
+    LexicalSubstitution,
+    SemanticParaphrase,
+    Perturbation,
+)
+from counterfactual_lab.generator import (
+    CounterfactualGenerator,
+    CounterfactualPair,
+    GenerationResult,
+)
+from counterfactual_lab.bias import (
+    BiasEvaluator,
+    BiasReport,
+    DatasetBiasReport,
+)
 
 __all__ = [
-    "CounterfactualGenerator", 
+    # perturbations
+    "LexicalSubstitution",
+    "SemanticParaphrase",
+    "Perturbation",
+    # generator
+    "CounterfactualGenerator",
+    "CounterfactualPair",
+    "GenerationResult",
+    # bias evaluation
     "BiasEvaluator",
-    "_implementation_level",
-    "_using_lightweight"
+    "BiasReport",
+    "DatasetBiasReport",
 ]
